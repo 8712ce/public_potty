@@ -1,0 +1,19 @@
+# VIRTUAL ENVIRONMENTS #
+venv/
+
+# PYTHON CACHE FILES #
+__pycache__/
+*.pyc 
+*.pyo
+*.pyd
+
+# DJANGO MIGRATIONS (OPTIONAL, KEEP IF I WANT FULL HISTORY) #
+*.sqlite3
+db.sqlite3
+
+# VS CODE SETTINGS (OPTIONAL) #
+.vscode/
+
+# LOGS #
+logs/
+*.log 
