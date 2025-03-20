@@ -50,6 +50,12 @@ class Location(models.Model):
         ("office", "Office"),
     ]
 
+    SUBTYPES = [
+        (1, "Fancy"),
+        (2, "Average"),
+        (3, "Scuzzy"),
+    ]
+
     type = models.CharField(
         max_length=50,
         choices=LOCATION_TYPES
@@ -80,7 +86,16 @@ class Location(models.Model):
         help_text="For display, e.g., '9AM - 5PM'"
     )
 
+    subtype = models.IntegerField(
+        choices=SUBTYPES,
+        blank=True,
+        null=True,
+        help_text="Only applies to stores, bars, and restaurants"
+    )
+
     def __str__(self):
+        if self.subtype and self.type in ["store", "bar", "restaurant"]:
+            return f"{self.get_type_display()} ({self.get_subtype_display()})"
         return self.name or f"{self.get_type_display()}"
     
     def randomize_location(self):
@@ -89,4 +104,11 @@ class Location(models.Model):
         self.has_restroom = random.choice([True, False])
         self.open_now = random.choice([True, False])
         self.open_to_public = random.choice([True, False])
+
+        # ASSIGN A SUBTYPE ONLY FOR STORES, BARS, OR RESTAURANTS #
+        if self.type in ["store", "bar", "restaurant"]:
+            self.subtype = random.choice([1, 2, 3])
+        else:
+            self.subtype = None
+            
         self.save()
