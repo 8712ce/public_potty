@@ -10,6 +10,29 @@
     </head>
     <body>
         <h1>Game Loading...</h1>
+
+        <h2>Random Locations:</h2>
+        <ul>
+            {% for location in locations %}
+              <li>
+                <strong>{{ location.get_type_display }}</strong>
+                {% if location.subtype %}
+                  ({{ location.get_subtype_display }})
+                {% endif %}
+                {% if location.name %} - "{{ location.name }}" {% endif %}
+                <br>
+
+                <!-- SHOW BOOLEANS IN A USER-FRIENDLY WAY -->
+                Has restroom? {{ location.has_restroom|yesno:"Yes,No" }}<br>
+                Open now? {{ location.open_now|yesno:"Yes,No" }}<br>
+                Public? {{ location.open_to_public|yesno:"Yes,No" }}
+              </li>
+            {% empty %}
+              <li>No locations found.</li>
+            {% endfor %}
+          </ul>
+
+
         <div id="gameCanvas"></div>
         <script src="/static/js/game.js"></script>
     </body>

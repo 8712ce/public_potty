@@ -56,42 +56,19 @@ class Location(models.Model):
         (3, "Scuzzy"),
     ]
 
-    type = models.CharField(
-        max_length=50,
-        choices=LOCATION_TYPES
-    )
+    type = models.CharField(max_length=50, choices=LOCATION_TYPES)
 
-    name = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True
-    )
+    name = models.CharField(max_length=100, blank=True, null=True)
 
-    has_restroom = models.BooleanField(
-        default=False
-    )
+    has_restroom = models.BooleanField(default=False)
 
-    open_now = models.BooleanField(
-        default=True
-    )
+    open_now = models.BooleanField(default=True)
 
-    open_to_public = models.BooleanField(
-        default=True
-    )
+    open_to_public = models.BooleanField(default=True)
 
-    hours_open = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        help_text="For display, e.g., '9AM - 5PM'"
-    )
+    hours_open = models.CharField(max_length=50, blank=True, null=True, help_text="For display, e.g., '9AM - 5PM'")
 
-    subtype = models.IntegerField(
-        choices=SUBTYPES,
-        blank=True,
-        null=True,
-        help_text="Only applies to stores, bars, and restaurants"
-    )
+    subtype = models.IntegerField(choices=SUBTYPES, blank=True, null=True, help_text="Only applies to stores, bars, and restaurants")
 
     def __str__(self):
         if self.subtype and self.type in ["store", "bar", "restaurant"]:
@@ -111,4 +88,4 @@ class Location(models.Model):
         else:
             self.subtype = None
             
-        self.save()
+        # self.save()
