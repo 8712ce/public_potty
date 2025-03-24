@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -6,12 +7,45 @@
         <title>Public Potty</title>
         <!-- <script src="https://pixijs.download/release/pixi.min.js"></script> -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.3.2/pixi.min.js"></script>
+        <link rel="stylesheet" href="{% static 'gameplay/css/styles.css' %}">
 
     </head>
     <body>
         <h1>Game Loading...</h1>
 
-        <h2>Random Locations:</h2>
+        <!-- CONTAINER FOR RANDOM LOCATIONS -->
+        <div class="locations-container">
+          {% for location in locations %}
+            <div class="location-card">
+              <!-- LOCATION TYPE AND SUBTYPE -->
+              <h2>
+                {{ location.get_type_display }}
+                {% if location.subtype %}
+                  ({{ location.get_subtype_display }})
+                {% endif %}
+              </h2>
+
+              <!-- IF THE LOCATION HAS A CUSTOM NAME -->
+              {% if location.name %}
+                <p>"{{ location.name }}"</p>
+              {% endif %}
+
+              VARIOUS BOOLEANS
+              <p>Has restroom? {{ location.has_restroom|yesno:"Yes,No" }}</p>
+              <p>Open Now? {{ location.open_now|yesno:"Yes,No" }}</p>
+              <p>Public? {{ location.open_to_public|yesno:"Yes,No" }}</p>
+            </div>
+          {% endfor %}
+        </div>
+
+
+
+
+
+
+
+
+        <!-- <h2>Random Locations:</h2>
         <ul>
             {% for location in locations %}
               <li>
@@ -20,17 +54,17 @@
                   ({{ location.get_subtype_display }})
                 {% endif %}
                 {% if location.name %} - "{{ location.name }}" {% endif %}
-                <br>
+                <br> -->
 
                 <!-- SHOW BOOLEANS IN A USER-FRIENDLY WAY -->
-                Has restroom? {{ location.has_restroom|yesno:"Yes,No" }}<br>
+                <!-- Has restroom? {{ location.has_restroom|yesno:"Yes,No" }}<br>
                 Open now? {{ location.open_now|yesno:"Yes,No" }}<br>
                 Public? {{ location.open_to_public|yesno:"Yes,No" }}
               </li>
             {% empty %}
               <li>No locations found.</li>
             {% endfor %}
-          </ul>
+          </ul> -->
 
 
         <div id="gameCanvas"></div>

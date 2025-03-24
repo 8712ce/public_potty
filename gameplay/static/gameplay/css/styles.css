@@ -1,0 +1,21 @@
+.locations-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 1rem;
+}
+
+.location-card {
+    border: 2px solid black;
+    padding: 1rem;
+    width: 200px;
+    box-sizing: border-box;
+}
+
+.location-card h2 {
+    margin: 0 0 0.5rem;
+}
+
+.location-card p {
+    margin: 0.3rem 0;
+}
