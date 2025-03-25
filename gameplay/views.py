@@ -4,22 +4,6 @@ from django.conf import settings
 from .models import Location
 import random
 
-# # Create your views here.
-# def game_view(request):
-#     Location.objects.all().delete()
-    
-#     random_locations = []
-
-#     for _ in range(3):
-#         loc = Location()
-#         loc.randomize_location() # SETS TYPE, SUBTYPE, RESTROOM, ETC. #
-#         loc.save() # NOW IT'S PERSISTED IN THE DATABASE #
-#         random_locations.append(loc)
-
-
-#     return render(request, "game.html", {
-#         'locations': random_locations
-#     })
 
 def generate_random_chunk(num_locations=5):
 
@@ -78,3 +62,29 @@ def get_chunk(request):
     chunk_data = get_or_create_chunk(request.session, chunk_index)
     return JsonResponse(chunk_data, safe=False)
 
+
+
+
+
+# Create your views here.
+# def game_view(request):
+#     Location.objects.all().delete()
+    
+#     random_locations = []
+
+#     for _ in range(3):
+#         loc = Location()
+#         loc.randomize_location() # SETS TYPE, SUBTYPE, RESTROOM, ETC. #
+#         loc.save() # NOW IT'S PERSISTED IN THE DATABASE #
+#         random_locations.append(loc)
+
+
+#     return render(request, "game.html", {
+#         'locations': random_locations
+#     })
+def game_view(request):
+    # MAYBE CREATE A STARTING CHUNK AT INDEX 0 SO THERE'S SOMETHING TO SEE RIGHT AWAY ON PAGE LOAD
+    starting_chunk = get_or_create_chunk(request.session, 0)
+
+    # PASS THESE TO THE TEMPLATE IF WE WANT TO DISPLAY THEM INITIALLY OR WE CAN PASS AN EMPTY LIST IF WE WANT THE FRONT-END TO REQUEST IT DYNAMICALLY
+    return render(request, 'game.html', {"locations": starting_chunk})
