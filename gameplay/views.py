@@ -41,3 +41,28 @@ def generate_random_chunk(num_locations=5):
         }
         chunk_data.append(location_dict)
     return chunk_data
+
+
+
+
+
+def get_or_create_chunk(session, chunk_index):
+
+    # CHECK IF CHUNK_INDEX IS IN THE SESSION.  IF NOT, GENERATE 5 RANDOM LOCATIONS AND STORE TEHM. RETURNS THE LIST OF LOCATION DICTS FOR THAT CHUNK.
+
+    if 'chunks' not in session:
+        session['chunks'] = {} # CREATE A DICTIONARY
+
+    chunks = session['chunks']  # REFERENCE
+
+    # CONVERT CHUNK_INDEX TO STRING BECAUSE SESSION KEYS MUST BE JSON-SERIALIZABLE
+    index_str = str(chunk_index)
+
+    if index_str not in chunks:
+        # CREATE A NEW CHUNK WITH 5 RANDOM LOCATIONS
+        chunk_data = generate_random_chunk(num_locations=5)
+        # STORE IN SESSION
+        chunks[index_str] = chunk_data
+        session.modified = True # MARK SESSION AS CHANGED
+
+    return chunks[index_str]
