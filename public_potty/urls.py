@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from gameplay.views import game_view
+from gameplay.views import game_view, get_chunk
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', game_view, name='game'),
+    path('', game_view, name='game'),   # RENDERSE GAME.HTML
+    path('get_chunk/', get_chunk, name='get_chunk'),    # RETURNS JSON FOR A GIVEN CHUNK
 ]

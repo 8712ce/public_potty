@@ -22,6 +22,7 @@ class Pedestrian(models.Model):
     bowels = models.IntegerField(
         default=0
     )
+    # ADD NUMBER OF TIMES WASHED HANDS FOR PART OF TOTAL PLAYER STATS AT LEVEL END AND MAIN SCOREBOARD
 
     def __str__(self):
         # THIS IS HOW THIS MODEL APPEARS IN TEH ADMIN / SHELL #
