@@ -67,7 +67,7 @@ function moveRightOneCard() {
     locationInChunk++;
 
     // PRE-FETCH NEXT CHUNK IF WERE NEAR THE 5TH BUILDING //
-    if (locationInChunk >=3) {
+    if (locationInChunk >=1) {
         let nextChunk = currentChunkIndex + 1;
         // IF WE HAVEN'T LOADED IT YET, DO SO //
         if (!loadedChunks[nextChunk]) {
