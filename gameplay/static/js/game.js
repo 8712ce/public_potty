@@ -194,9 +194,13 @@ function loadChunk(index) {
                     labelText += ` (${locData.subtype_display})`;
                 }
 
+                if (locData.name) {
+                    labelText += `\n"${locData.name}"`;
+                }
+
                 // ADD A RESTROOM/PUBLIC TAG //
-                if (locData.has_restroom) labelText += "\n";
-                if (!locData.open_to_public) labelText += "\n";
+                labelText += `\nRestroom: ${locData.has_restroom ? "Yes" : "No"}`;
+                labelText += `\nPublic: ${locData.open_to_public ? "Yes" : "No"}`;
 
                 let label = new PIXI.Text(labelText, {
                     fontSize: 12,
@@ -207,7 +211,9 @@ function loadChunk(index) {
                 });
 
                 label.anchor.set(0.5, 1); // CENTER HORIZONTALLY, BOTTOM-ALIGN VERTICALLY //
-                label.x = building.worldX - worldX + 25; // CENTER ABOVIE BULDING //
+                // label.x = building.worldX - worldX + 25; // CENTER ABOVIE BULDING //
+                label.worldX = building.worldX + 25;
+                label.x = label.worldX - worldX;
                 label.y = building.y; // RIGHT ABOVE THE BUILDING TOP //
 
                 label.zIndex = 5;
