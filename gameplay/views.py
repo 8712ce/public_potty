@@ -66,3 +66,15 @@ def get_or_create_chunk(session, chunk_index):
         session.modified = True # MARK SESSION AS CHANGED
 
     return chunks[index_str]
+
+
+
+
+
+def get_chunk(request):
+
+    # /GET_CHUNK?INDEX=0 -> RETURNS THE CHUNK DATA (LIST OF 5 LOCATION DICTS).  IF CHUNK DOESN'T EXITS, CREATES IT.
+    chunk_index = int(request.GET.get('index', 0))
+    chunk_data = get_or_create_chunk(request.session, chunk_index)
+    return JsonResponse(chunk_data, safe=False)
+
