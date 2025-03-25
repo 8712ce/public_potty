@@ -6,12 +6,12 @@ let app;
 let currentBuildings = []; // HOLDS "BUILDING" GRAPHICS //
 let worldX = 0; // HOW FAR WE'VE SCROLLED (IF WE WANT TO SHIFT BACKGROUND) //
 const chunkWidth = 800; // SAME AS CANVAS WIDTH //
-
+let loadedChunks = {}; // MAPS CHUNK INDEX -> BOOLEAN OR DATA //
 let currentChunkIndex = 0;
 let locationInChunk = 0; // WHICH OF THE 5 LOCATIONS IN THAT CHUNK //
 let locationWidth = 160; // CHUNKWIDTH / 5 //
 
-let loadedChunks = {}; // MAPS CHUNK INDEX -> BOOLEAN OR DATA //
+
 
 
 
@@ -20,8 +20,42 @@ let loadedChunks = {}; // MAPS CHUNK INDEX -> BOOLEAN OR DATA //
 // A FUNCTION TO RE-DRAW EACH BUILDING BASED ON WORLDX //
 function updateScene() {
     currentBuildings.forEach(b => {
-        b.x = b.worldX - worldX;
+        if (b.worldX !== undefined) {
+            b.x = b.worldX - worldX;
+        }
     });
+}
+
+
+
+
+
+function animateWorldX(targetX, duration = 300) {
+    let startX = worldX;
+    let deltaX = targetX - startX;
+    let startTime = performance.now();
+
+    function animateFrame(now) {
+        let elapsed = now - startTime;
+        let progress = Math.min(elapsed / duration, 1);
+
+        // OPTIONAL EASING FUNCTION (easeInOutQuad) //
+        let eased = progress < 0.5
+            ? 2 * progress * progress
+            : -1 + (4 - 2 * progress) * progress;
+        
+        worldX = startX + deltaX * eased;
+        updateScene();
+
+        if (progress < 1) {
+            requestAnimationFrame(animateFrame);
+        } else {
+            worldX = targetX;
+            updateScene();
+        }
+    }
+
+    requestAnimationFrame(animateFrame);
 }
 
 
@@ -30,13 +64,57 @@ function updateScene() {
 
 // FUNCTIONS TO MOVE ONE CARD AT A TIME //
 function moveRightOneCard() {
-    worldX += buildingSpacing;
-    updateScene();
+    locationInChunk++;
+
+    // PRE-FETCH NEXT CHUNK IF WERE NEAR THE 5TH BUILDING //
+    if (locationInChunk >=3) {
+        let nextChunk = currentChunkIndex + 1;
+        // IF WE HAVEN'T LOADED IT YET, DO SO //
+        if (!loadedChunks[nextChunk]) {
+            loadChunk(nextChunk);
+        }
+    }
+
+    // IF WE'VE FULLY PASSED TEH LAST BUILDING, STEP INTO THE NEXT CHUNK //
+    if (locationInChunk >= 5) {
+        currentChunkIndex++;
+        locationInChunk = 0;
+    }
+
+    // UPDATE THE CAMERA OFFSET //
+    // worldX = (currentChunkIndex * chunkWidth) + (locationInChunk * locationWidth);
+    // updateScene();
+
+    let targetX = (currentChunkIndex * chunkWidth) + (locationInChunk * locationWidth);
+    animateWorldX(targetX);
 }
 
+
+
+
+
 function moveLeftOneCard() {
-    worldX -= buildingSpacing;
-    updateScene();
+    locationInChunk--;
+
+    // PRE-FETCH TEH PREVIOUS CHUNK IF WE'RE NEAR THE LOCATIONINCHUNK=1 OR 0 //
+    if (locationInChunk <= 1) {
+        let prevChunk = currentChunkIndex -1;
+        if (!loadedChunks[prevChunk]) {
+            loadChunk(prevChunk);
+        }
+    }
+
+    // IF WE STEPPED PAST BUILDING 0 //
+    if (locationInChunk < 0) {
+        currentChunkIndex--;
+        locationInChunk = 4;
+    }
+
+    // worldX = (currentChunkIndex * chunkWidth) + (locationInChunk * locationWidth);
+    // updateScene();
+
+    let targetX = (currentChunkIndex * chunkWidth) + (locationInChunk * locationWidth);
+    animateWorldX(targetX);
 }
 
 
@@ -45,6 +123,14 @@ function moveLeftOneCard() {
 
 // FETCH CHUNK DATA FROM /GET_CHUNK/?INDEX=CURRENTCHUNKINDEX //
 function loadChunk(index) {
+    // IF WE ALREADY LOADED THIS CHUNK, SKIP //
+    if (loadedChunks[index]) return;
+
+    // MARK THIS CHUNK AS LOADING/LOADED //
+    // COULD ALSO DO A 'LOADING" STATE TO AVOID RACE CONDITIONS //
+    loadedChunks[index] = true;
+
+    // FETCH THE CHUNK DATA //
     fetch(`/get_chunk/?index=${index}`)
         .then(response => response.json())
         .then(data => {
@@ -68,8 +154,8 @@ function loadChunk(index) {
 
 
             // REMOVE OLD BUILDINGS IF WE ONLY WANT THIS CHUNK ON SCREEN //
-            currentBuildings.forEach(b => app.stage.removeChild(b));
-            currentBuildings = [];
+            // currentBuildings.forEach(b => app.stage.removeChild(b));
+            // currentBuildings = [];
 
             data.forEach((locData, i) => {
                 // 1. CREATE A NEW GRAPHICS OBJECT //
@@ -80,7 +166,6 @@ function loadChunk(index) {
 
                 // 2. DETERMINE HORIZONTAL POSITION WITHIN THE CHUNK. CHUNKWIDTH=800, SO EACH CHUNK HOLDS 5 BUILDINGS => SPACING=160 EACH
                 let buildingSpacing = chunkWidth / 5;
-                // E.G. I=0..4 => POSITIONS: 80, 240, 400, 720 //
                 let xWithinChunk = i * buildingSpacing + (buildingSpacing / 2);
 
                 // 3. BUILDING.WORLDX = CHUNKINDEX * CHUNKWIDTH + XWITHINCHUNK. THIS IS THE "ABOSOLUTE" X-POSITION IN THE GAME WORLD //
@@ -95,11 +180,39 @@ function loadChunk(index) {
                 // 6. IF WE WANT TO POSITION IT IMMEDIATELY ON THE SCREEN, SUBTRACT WORLDX.  IF WE'RE GOING TO  CALL UPDATESCENE() LATER, WE CAN SKIP THIS.
                 building.x = building.worldX - worldX;
 
+                building.zIndex = 1;
+
                 // 7. ADD BUILDING OT THE PIXI STAGE //
                 app.stage.addChild(building);
 
                 // 8. KEEP TRACK OF IT IF WE WANT TO MOVE OR REMOVE IT LATER //
                 currentBuildings.push(building);
+
+                // ADD A TEXT LABEL ABOVE EACH BUILDING //
+                let labelText = `${locData.type_display}`;
+                if (locData.subtype_display) {
+                    labelText += ` (${locData.subtype_display})`;
+                }
+
+                // ADD A RESTROOM/PUBLIC TAG //
+                if (locData.has_restroom) labelText += "\n";
+                if (!locData.open_to_public) labelText += "\n";
+
+                let label = new PIXI.Text(labelText, {
+                    fontSize: 12,
+                    fill: 0xffffff,
+                    align: "center",
+                    wordWrap: true,
+                    wordWrapWidth: 60
+                });
+
+                label.anchor.set(0.5, 1); // CENTER HORIZONTALLY, BOTTOM-ALIGN VERTICALLY //
+                label.x = building.worldX - worldX + 25; // CENTER ABOVIE BULDING //
+                label.y = building.y; // RIGHT ABOVE THE BUILDING TOP //
+
+                label.zIndex = 5;
+                app.stage.addChild(label);
+                currentBuildings.push(label);
             });
         })
         .catch(err => console.error("Error loading chunk:", err));
@@ -136,6 +249,8 @@ document.addEventListener("DOMContentLoaded", function () {
             backgroundColor: 0x1099bb
         });
 
+        app.stage.sortableChildren = true;
+
         let canvasContainer = document.getElementById("gameCanvas");
 
         // CHECK IF gameCanvas EXISTS //
@@ -154,6 +269,7 @@ document.addEventListener("DOMContentLoaded", function () {
         player.endFill();
         player.x = 400;
         player.y = 300;
+        player.zIndex = 10;
         app.stage.addChild(player);
 
         // INITIALIZE CHUNK 0 SO WE HAVE DATA IN PIXI FROM THE START //
@@ -178,43 +294,9 @@ document.addEventListener("DOMContentLoaded", function () {
     rightButton.innerText = "Move Right";
     document.body.appendChild(rightButton);
 
-    // leftButton.addEventListener('click', () => {
-    //     currentChunkIndex--;
-    //     loadChunk(currentChunkIndex);
-    // });
-    leftButton.addEventListener('click', () => {
-        locationInChunk--;
-        if (locationInChunk < 0) {
-            currentChunkIndex--;
-            locationInChunk = 4; // THE LAST LOCATION IN A 5-LOCATION CHUNK //
-            loadChunk(currentChunkIndex);
-        }
-        // CALCULATE THE NEW WORLD OFFSET //
-        let newWorldX = (currentChunkIndex * chunkWidth) + (locationInChunk * locationWidth);
-        worldX = newWorldX;
-        
-        // RE-POSITION ALL LOCATIONS BASED ON THE UPDATED WORLD X //
-        updateScene();
-    });
-    // leftButton.addEventListener('click', moveLeftOneCard);
 
-    // rightButton.addEventListener('click', () => {
-    //     currentChunkIndex++;
-    //     loadChunk(currentChunkIndex);
-    // });
-    rightButton.addEventListener('click', () => {
-        locationInChunk++;
-        if (locationInChunk >= 5) {
-            currentChunkIndex++;
-            locationInChunk = 0;
-            // LOAD NEW CHUNK //
-            loadChunk(currentChunkIndex);
-        }
-        let newWorldX = currentChunkIndex * chunkWidth + (locationInChunk * locationWidth);
-        worldX = newWorldX;
-        updateScene();
-    });
-    // rightButton.addEventListener('click', moveRightOneCard);
+    leftButton.addEventListener('click', moveLeftOneCard);
+    rightButton.addEventListener('click', moveRightOneCard);
 
 
 });
