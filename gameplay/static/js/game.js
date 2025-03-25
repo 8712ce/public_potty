@@ -41,4 +41,54 @@ document.addEventListener("DOMContentLoaded", function () {
     } catch (error) {
         console.error("Error initializing Pixi.js:", error);
     }
+
+
+
+
+
+    let currentChunkIndex = 0;
+
+    // SIMPLE LEFT/RIGHT BUTTONS FOR TESTING CHUNK CHANGES //
+    const leftButton = document.createElement('button');
+    leftButton.innerText = "Move Left";
+    document.body.appendChild(leftButton);
+
+    const rightButton = document.createElement('button');
+    rightButton.innerText = "Move Right";
+    document.body.appendChild(rightButton);
+
+    leftButton.addEventListener('click', () => {
+        currentChunkIndex--;
+        loadChunk(currentChunkIndex);
+    });
+    rightButton.addEventListener('click', () => {
+        currentChunkIndex++;
+        loadChunk(currentChunkIndex);
+    });
+
+    // FETCH CHUNK DATA FROM /GET_CHUNK/?INDEX=CURRENTCHUNKINDEX //
+    function loadChunk(index) {
+        fetch(`/get_chunk/?index=${index}`)
+            .then(respond => Response.json())
+            .then(data => {
+                console.log("Chunk data for index", index, data);
+                // FOR NOW, JUST DISPLAY THEM IN THE .LOCATIONS-CONTAINER OR EVENTUALLY, INTEGRATE THEM INTO PIXI SCENE //
+
+                const container = document.querySelector('.locations-container');
+                container.innerHTML = ''; // CLEAR EXISTING //
+
+                data.forEach(location => {
+                    const div = document.createElement('div');
+                    div.classList.add('location-card');
+                    div.innerHTML = `
+                        <h2>${location.type_display}${location.subtype_display ? " ("+ location.subtype_display +")" : ""}</h2>
+                        ${location.name ? `<p>"${location.name}"</p>` : ""}
+                        <p>Has restroom? ${location.has_restroom ? "Yes" : "No"}</p>
+                        <p>Public? ${location.open_to_public ? "Yes" : "No"}</p>
+                    `;
+                    container.appendChild(div);
+                });
+            })
+            .catch(err => console.error("Error loading chunk:", err));
+    }
 });
