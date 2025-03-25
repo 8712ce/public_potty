@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // FETCH CHUNK DATA FROM /GET_CHUNK/?INDEX=CURRENTCHUNKINDEX //
     function loadChunk(index) {
         fetch(`/get_chunk/?index=${index}`)
-            .then(respond => Response.json())
+            .then(response => response.json())
             .then(data => {
                 console.log("Chunk data for index", index, data);
                 // FOR NOW, JUST DISPLAY THEM IN THE .LOCATIONS-CONTAINER OR EVENTUALLY, INTEGRATE THEM INTO PIXI SCENE //
