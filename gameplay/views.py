@@ -83,8 +83,9 @@ def get_chunk(request):
 #         'locations': random_locations
 #     })
 def game_view(request):
+    # CLEARS SESSION ON EVERY GAME PAGE LAOD
+    request.session.flush()
     # MAYBE CREATE A STARTING CHUNK AT INDEX 0 SO THERE'S SOMETHING TO SEE RIGHT AWAY ON PAGE LOAD
     starting_chunk = get_or_create_chunk(request.session, 0)
-
     # PASS THESE TO THE TEMPLATE IF WE WANT TO DISPLAY THEM INITIALLY OR WE CAN PASS AN EMPTY LIST IF WE WANT THE FRONT-END TO REQUEST IT DYNAMICALLY
     return render(request, 'game.html', {"locations": starting_chunk})

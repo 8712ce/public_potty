@@ -14,19 +14,19 @@
         <h1>Game Loading...</h1>
 
         <!-- CONTAINER FOR RANDOM LOCATIONS -->
-        <div class="locations-container">
+        <!-- <div class="locations-container">
           {% for location in locations %}
-            <div class="location-card">
+            <div class="location-card"> -->
               <!-- LOCATION TYPE AND SUBTYPE -->
-              <h2>
+              <!-- <h2>
                 {{ location.get_type_display }}
                 {% if location.subtype %}
                   ({{ location.get_subtype_display }})
                 {% endif %}
-              </h2>
+              </h2> -->
 
               <!-- IF THE LOCATION HAS A CUSTOM NAME -->
-              {% if location.name %}
+              <!-- {% if location.name %}
                 <p>"{{ location.name }}"</p>
               {% endif %}
 
@@ -36,7 +36,7 @@
               <p>Public? {{ location.open_to_public|yesno:"Yes,No" }}</p>
             </div>
           {% endfor %}
-        </div>
+        </div> -->
 
 
         <div id="gameCanvas"></div>
