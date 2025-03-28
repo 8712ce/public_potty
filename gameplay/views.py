@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.conf import settings
 from .models import Location
+from .models import Character
 import random
 
 
@@ -89,3 +90,10 @@ def game_view(request):
     starting_chunk = get_or_create_chunk(request.session, 0)
     # PASS THESE TO THE TEMPLATE IF WE WANT TO DISPLAY THEM INITIALLY OR WE CAN PASS AN EMPTY LIST IF WE WANT THE FRONT-END TO REQUEST IT DYNAMICALLY
     return render(request, 'game.html', {"locations": starting_chunk})
+
+
+
+
+def character_select_view(request):
+    characters = Character.objects.all()
+    return render(request, "character_select.html", {"characters": characters})
