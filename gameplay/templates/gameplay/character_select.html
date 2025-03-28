@@ -1,0 +1,78 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Select Your Character</title>
+        <link rel="stylesheet" href="{% static 'gameplay/css/styles.css' %}">
+        <style>
+            .character-grid {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                justify-content: center;
+                margin-top: 40px;
+            }
+
+            .character-card {
+                border: 2px solid #ccc;
+                border-radius: 10px;
+                padding: 20px;
+                width: 200px;
+                text-align: center;
+                background: #f8f8f8;
+                transition: transform 0.2s ease;
+            }
+
+            .character-card:hover {
+                transform: scale(1.05);
+                cursor: pointer;
+                border-color: #0099ff;
+            }
+
+            .character-card h3 {
+                margin-top: 0;
+            }
+
+            form {
+                display: inline-block;
+            }
+
+            button {
+                margin-top: 10px;
+                padding: 8px 12px;
+                background-color: #0077cc;
+                color: white;
+                border: none;
+                border-radius: 4px;
+            }
+
+            button:hover {
+                background-color: #005fa3;
+            }
+        </style>
+    </head>
+    <body>
+
+        <h1 style="text-align: center;">Choose Your Character</h1>
+
+        <div class="character-grid">
+            {% for character in characters %}
+                <div class="character-card">
+                    <h3>{{ character.name }}</h3>
+                    <p>Toilet urgency rate: {{ character.urgency_rate }}</p>
+
+                    <form method="POST" action="{% url 'select_character' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="character_id" value="{{ character.id }}">
+                        <button type="submit">Select</button>
+                    </form>
+                </div>
+            {% empty %}
+                <p>No characters available.</p>
+            {% endfor %}
+        </div>
+        
+    </body>
+</html>
