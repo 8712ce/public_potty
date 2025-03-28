@@ -16,10 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from gameplay.views import game_view, get_chunk
+from gameplay.views import game_view, get_chunk, character_select_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', game_view, name='game'),   # RENDERSE GAME.HTML
     path('get_chunk/', get_chunk, name='get_chunk'),    # RETURNS JSON FOR A GIVEN CHUNK
+    path('select-character/', character_select_view, name='select_character'),
 ]
