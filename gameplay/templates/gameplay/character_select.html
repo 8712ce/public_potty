@@ -61,7 +61,7 @@
             {% for character in characters %}
                 <div class="character-card">
                     <h3>{{ character.name }}</h3>
-                    <p>Toilet urgency rate: {{ character.urgency_rate }}</p>
+                    <p>Toilet meter drain rate: {{ character.toilet_meter_drain_rate }}</p>
 
                     <form method="POST" action="{% url 'select_character' %}">
                         {% csrf_token %}
@@ -73,6 +73,6 @@
                 <p>No characters available.</p>
             {% endfor %}
         </div>
-        
+
     </body>
 </html>
