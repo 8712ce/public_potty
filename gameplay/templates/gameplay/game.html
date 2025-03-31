@@ -5,6 +5,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Public Potty</title>
+        <script>
+          const selectedCharacterName = "{{ character.name|escapejs }}";
+        </script>
         <!-- <script src="https://pixijs.download/release/pixi.min.js"></script> -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.3.2/pixi.min.js"></script>
         <link rel="stylesheet" href="{% static 'gameplay/css/styles.css' %}">

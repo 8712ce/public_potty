@@ -278,6 +278,21 @@ document.addEventListener("DOMContentLoaded", function () {
         player.zIndex = 10;
         app.stage.addChild(player);
 
+        // ADD NAME LABEL IF AVAILABLE //
+        if (typeof selectedCharacterName !== 'undefined' && selectedCharacterName) {
+            const nameText = new PIXI.Text(selectedCharacterName, {
+                fontSize: 14,
+                fill: 0xffffff,
+                align: 'center'
+            });
+
+            nameText.anchor.set(0.5, 1);
+            nameText.x = player.x + 25;
+            nameText.y = player.y - 5;
+            nameText.zIndex = 11;
+            app.stage.addChild(nameText);
+        }
+
         // INITIALIZE CHUNK 0 SO WE HAVE DATA IN PIXI FROM THE START //
         loadChunk(0);
 
