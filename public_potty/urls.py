@@ -23,4 +23,5 @@ urlpatterns = [
     path('', game_view, name='game'),   # RENDERSE GAME.HTML
     path('get_chunk/', get_chunk, name='get_chunk'),    # RETURNS JSON FOR A GIVEN CHUNK
     path('select-character/', character_select_view, name='select_character'),
+    # path('start_game/', start_game_view, name='start_game'),
 ]

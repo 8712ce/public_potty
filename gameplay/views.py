@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.conf import settings
 from .models import Location
@@ -85,15 +85,42 @@ def get_chunk(request):
 #     })
 def game_view(request):
     # CLEARS SESSION ON EVERY GAME PAGE LAOD
-    request.session.flush()
+    # request.session.flush()
+
+    # REMOVE PREVIOUS CHUNK DATA SO WE GET A FRESH MAP ON LOAD 
+    request.session.pop('chunks', None)
+
+    # IF NO CHARACTER SELECTED YET, REDIRECT TO SELECTION SCREEN
+    if "selected_character_id" not in request.session:
+        return redirect("select_character")
+    
     # MAYBE CREATE A STARTING CHUNK AT INDEX 0 SO THERE'S SOMETHING TO SEE RIGHT AWAY ON PAGE LOAD
     starting_chunk = get_or_create_chunk(request.session, 0)
+
+    char_id = request.session.get("selected_character_id")
+    character = None
+    if char_id:
+        character = Character.objects.get(id=char_id)
     # PASS THESE TO THE TEMPLATE IF WE WANT TO DISPLAY THEM INITIALLY OR WE CAN PASS AN EMPTY LIST IF WE WANT THE FRONT-END TO REQUEST IT DYNAMICALLY
-    return render(request, 'gameplay/game.html', {"locations": starting_chunk})
+    return render(request, 'gameplay/game.html', {"locations": starting_chunk, "characters": character})
 
 
 
 
 def character_select_view(request):
-    characters = Character.objects.all()
-    return render(request, "gameplay/character_select.html", {"characters": characters})
+    if request.method == "POST":
+        char_id = request.POST.get("character_id")
+        if char_id:
+            request.session["selected_character_id"] = char_id
+            return redirect("game") # REDIRECT TO GAME VIEW
+    else:
+        characters = Character.objects.all()
+        return render(request, "gameplay/character_select.html", {"characters": characters})
+
+
+
+# def start_game_view(request):
+#     if request.method == "POST":
+#         char_id = request.POST.get("character_id")
+#         request.session["selected_character_id"] = char_id
+#         return redirect("game_view")
