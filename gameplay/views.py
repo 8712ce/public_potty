@@ -102,7 +102,7 @@ def game_view(request):
     if char_id:
         character = Character.objects.get(id=char_id)
     # PASS THESE TO THE TEMPLATE IF WE WANT TO DISPLAY THEM INITIALLY OR WE CAN PASS AN EMPTY LIST IF WE WANT THE FRONT-END TO REQUEST IT DYNAMICALLY
-    return render(request, 'gameplay/game.html', {"locations": starting_chunk, "characters": character})
+    return render(request, 'gameplay/game.html', {"locations": starting_chunk, "character": character})
 
 
 
