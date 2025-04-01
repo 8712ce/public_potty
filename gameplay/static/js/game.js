@@ -13,6 +13,7 @@ let locationWidth = 160; // CHUNKWIDTH / 5 //
 let addedCharacters = [];
 let addedCharacterNames = new Set();
 let zIndexCounter = 9;
+let nextOffset = 60; // STARTING DISTANCE FROM THE CENTER, TWEAK AS NEEDED //
 
 
 
@@ -243,12 +244,16 @@ if (typeof PIXI === "undefined") {
 
 
 
-function addCharacterToGame(name, buttonElement) {
+// function addCharacterToGame(name, buttonElement) {
+function addCharacterToGame(name) {
     if (addedCharacterNames.has(name)) {
         return; // PREVENT DUPLICATES //
     }
 
-    const offsetX = 50 + (addedCharacters.length * 60);
+    const direction = Math.random() < 0.5 ? -1 : 1; // RANDOMLY LEFT OR RIGHT //
+    // const offsetX = 50 + (addedCharacters.length * 60);
+    const offsetX = direction * nextOffset;
+    nextOffset += 60; // ENSURE SPACING INCREASES WITH EACH ADDED CHARACTER //
 
     const charGraphic = new PIXI.Graphics();
     charGraphic.beginFill(0x0000ff); // BLUE PLACEHOLDER //
@@ -276,10 +281,12 @@ function addCharacterToGame(name, buttonElement) {
     addedCharacterNames.add(name); // TRACK NAME //
 
     // DISABLE OR REMOVE BUTTON //
-    if (buttonElement) {
-        buttonElement.disabled = true;
-        buttonElement.innerText = "Added!"
-    }
+    // if (buttonElement) {
+    //     buttonElement.disabled = true;
+    //     buttonElement.innerText = "Added!"
+    // }
+    const button = document.querySelector(`button[data-charname="${name}"]`);
+    if (button) button.disabled = true;
 }
 
 

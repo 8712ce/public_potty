@@ -44,7 +44,7 @@
 
         <div id="add-character-butons" style="text-align: center; margin: 20px 0;">
           {% for char in other_characters %}
-            <button onclick="addCharacterToGame('{{ char.name|escapejs }}')">
+            <button onclick="addCharacterToGame('{{ char.name|escapejs }}', this)">
               Add {{ char.name }}
             </button>
           {% endfor %}
