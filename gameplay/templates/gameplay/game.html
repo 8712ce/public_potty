@@ -42,6 +42,14 @@
         </div> -->
 
 
+        <div id="add-character-butons" style="text-align: center; margin: 20px 0;">
+          {% for char in other_characters %}
+            <button onclick="addCharacterToGame('{{ char.name|escapejs }}')">
+              Add {{ char.name }}
+            </button>
+          {% endfor %}
+        </div>
+        
         <div id="gameCanvas"></div>
         <script src="/static/js/game.js"></script>
         <a href="{% url 'reset' %}"
