@@ -249,11 +249,16 @@ function getRandomDistance(min, max) {
 
 
 
-function addCharacterToGame(name, buttonElement, followMin = 30, followMax = 80) {
+function addCharacterToGame(name, buttonElement) {
 // function addCharacterToGame(name) {
     if (addedCharacterNames.has(name)) {
         return; // PREVENT DUPLICATES //
     }
+
+    // GET PERSONALIZED FOLLOW DISTANCE RANGE FROM BUTTON'S DATASET //
+    const min = parseInt(buttonElement.dataset.followMin, 10);
+    const max = parseInt(buttonElement.dataset.followMax, 10);
+    const offset = getRandomDistance(min, max);
 
     // addedCharacterNames.add(name);
 
@@ -263,7 +268,7 @@ function addCharacterToGame(name, buttonElement, followMin = 30, followMax = 80)
     // NEVER LESS THAN 30PX APART //
 
     // RANDOMLY CHOOSE LEFT OR RIGHT //
-    const offset = getRandomDistance(followMin, followMax);
+    // const offset = getRandomDistance(followMin, followMax);
     const direction = Math.random() < 0.5 ? -1 : 1;
     const totalOffset = offset * direction;
     // const maxOffset = 80; // PIXELS AWAY FROM MAIN CHARACTER //
@@ -298,10 +303,10 @@ function addCharacterToGame(name, buttonElement, followMin = 30, followMax = 80)
     label.anchor.set(0.5, 1);
     label.x = charGraphic.x + 25;
     label.y = charGraphic.y - 5;
-    label,zIndex = charGraphic.zIndex + 1;
+    label.zIndex = charGraphic.zIndex + 1;
     app.stage.addChild(label);
 
-    addedCharacters.push({ name, graphic: charGraphic, label, follow_distance_min: followMin, follow_distance_max: followMax });
+    addedCharacters.push({ name, graphic: charGraphic, label });
     addedCharacterNames.add(name); // TRACK NAME //
 
     // DISABLE OR REMOVE BUTTON //
