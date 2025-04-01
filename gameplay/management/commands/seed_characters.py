@@ -12,10 +12,11 @@ class Command(BaseCommand):
             {"name": "Brittany", "toilet_meter_drain_rate": 1.2},
             {"name": "Jet", "toilet_meter_drain_rate": 0.8},
             {"name": "Ezekiel", "toilet_meter_drain_rate": 1.5},
-            {"name": "Caleb", "toilet_meter_drain_rate": 1.1},
+            {"name": "Kaleb", "toilet_meter_drain_rate": 1.1},
         ]
 
         for data in characters:
-            Character.objects.get_or_create(**data)
+            # Character.objects.get_or_create(**data)
+            Character.objects.create(**data)
 
         self.stdout.write(self.style.SUCCESS("Characters seeded!"))
