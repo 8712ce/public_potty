@@ -10,6 +10,8 @@ let loadedChunks = {}; // MAPS CHUNK INDEX -> BOOLEAN OR DATA //
 let currentChunkIndex = 0;
 let locationInChunk = 0; // WHICH OF THE 5 LOCATIONS IN THAT CHUNK //
 let locationWidth = 160; // CHUNKWIDTH / 5 //
+let addedCharacters = [];
+let zIndexCounter = 9;
 
 
 
@@ -239,6 +241,39 @@ if (typeof PIXI === "undefined") {
 
 
 
+
+function addCharacterToGame(name) {
+    const offsetX = 50 + (addedCharacters.length * 60);
+
+    const charGraphic = new PIXI.Graphics();
+    charGraphic.beginFill(0x0000ff); // BLUE PLACEHOLDER //
+    charGraphic.drawRect(0, 0, 50, 50);
+    charGraphic.endFill();
+
+    charGraphic.x = 400 + offsetX;
+    charGraphic.y = 300;
+    charGraphic.zIndex = zIndexCounter--;
+    app.stage.addChild(charGraphic);
+
+    const label = new PIXI.Text(name, {
+        fontSize: 12,
+        fill: 0xffffff,
+        align: 'center'
+    });
+
+    label.anchor.set(0.5, 1);
+    label.x = charGraphic.x + 25;
+    label.y = charGraphic.y - 5;
+    label,zIndex = charGraphic.zIndex + 1;
+    app.stage.addChild(label);
+
+    addedCharacters.push({ name, graphic: charGraphic, label });
+}
+
+
+
+
+
 document.addEventListener("DOMContentLoaded", function () {
     console.log("DOM fully loaded and parsed.");
 
@@ -302,9 +337,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-
-
-    
 
     // SIMPLE LEFT/RIGHT BUTTONS FOR TESTING CHUNK CHANGES //
     const leftButton = document.createElement('button');
