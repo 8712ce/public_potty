@@ -28,6 +28,25 @@ function updateScene() {
             b.x = b.worldX - worldX;
         }
     });
+
+    const mainX = 400; // THE MAIN CHARACTER STAYS CENTERED ON SCREEN //
+
+    addedCharacters.forEach((charObj, index) => {
+        const { graphic, label, followMin, followMax } = charObj;
+
+        // PICK A DIRECTION TO FOLLOW (LEFT OR RIGHT OF MAIN) //
+        const dir = Math.random() < 0.5 ? -1 : 1;
+        const offset = getRandomDistance(followMin, followMax);
+
+        // UPDATE X BASED ON CURRENT WORLD X AND SPACING //
+        const targetX = mainX + (dir * offset);
+
+        // OPTIONALLY: SMOOTH FOLLOW ANIMATION //
+        graphic.x += (targetX - graphic.x) * 0.1;
+
+        // KEEP LABELS UPDATED TOO //
+        label.x = graphic.x + 25;
+    });
 }
 
 
