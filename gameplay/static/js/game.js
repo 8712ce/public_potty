@@ -244,8 +244,8 @@ if (typeof PIXI === "undefined") {
 
 
 
-// function addCharacterToGame(name, buttonElement) {
-function addCharacterToGame(name) {
+function addCharacterToGame(name, buttonElement) {
+// function addCharacterToGame(name) {
     if (addedCharacterNames.has(name)) {
         return; // PREVENT DUPLICATES //
     }
@@ -281,12 +281,10 @@ function addCharacterToGame(name) {
     addedCharacterNames.add(name); // TRACK NAME //
 
     // DISABLE OR REMOVE BUTTON //
-    // if (buttonElement) {
-    //     buttonElement.disabled = true;
-    //     buttonElement.innerText = "Added!"
-    // }
-    const button = document.querySelector(`button[data-charname="${name}"]`);
-    if (button) button.disabled = true;
+    if (buttonElement) {
+        buttonElement.disabled = true;
+        buttonElement.innerText = "Added!"
+    }
 }
 
 
