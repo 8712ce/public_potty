@@ -13,7 +13,7 @@ let locationWidth = 160; // CHUNKWIDTH / 5 //
 let addedCharacters = [];
 let addedCharacterNames = new Set();
 let zIndexCounter = 9;
-let nextOffset = 60; // STARTING DISTANCE FROM THE CENTER, TWEAK AS NEEDED //
+// let nextOffset = 40; // STARTING DISTANCE FROM THE CENTER, TWEAK AS NEEDED //
 
 
 
@@ -250,17 +250,33 @@ function addCharacterToGame(name, buttonElement) {
         return; // PREVENT DUPLICATES //
     }
 
-    const direction = Math.random() < 0.5 ? -1 : 1; // RANDOMLY LEFT OR RIGHT //
+    addedCharacterNames.add(name);
+
+    // DYNAMIC SPACING BASED ON HOW MANY CHARACTERS ARE ADDED //
+    let spacingBase = 50;
+    // let spacing = Math.max(30, spacingBase - addedCharacters.length * 5);
+    // NEVER LESS THAN 30PX APART //
+
+    // RANDOMLY CHOOSE LEFT OR RIGHT //
+    const maxOffset = 80; // PIXELS AWAY FROM MAIN CHARACTER //
+    const minOffset = 30; // AVOID EXACT OVERLAP //
+    let direction = Math.random() < 0.5 ? -1 : 1; // RANDOMLY LEFT OR RIGHT //
+    let offset = Math.floor(Math.random() * (maxOffset - minOffset)) + minOffset;
+    let totalOffset = direction * offset;
+    // let totalOffset = direction * spacing * addedCharacters.length;
     // const offsetX = 50 + (addedCharacters.length * 60);
-    const offsetX = direction * nextOffset;
-    nextOffset += 60; // ENSURE SPACING INCREASES WITH EACH ADDED CHARACTER //
+    // const offsetX = direction * nextOffset;
+    // nextOffset += 40; // ENSURE SPACING INCREASES WITH EACH ADDED CHARACTER //
+    
+
 
     const charGraphic = new PIXI.Graphics();
     charGraphic.beginFill(0x0000ff); // BLUE PLACEHOLDER //
     charGraphic.drawRect(0, 0, 50, 50);
     charGraphic.endFill();
 
-    charGraphic.x = 400 + offsetX;
+    // charGraphic.x = 400 + offsetX;
+    charGraphic.x = 400 + totalOffset;
     charGraphic.y = 300;
     charGraphic.zIndex = zIndexCounter--;
     app.stage.addChild(charGraphic);
