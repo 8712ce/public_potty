@@ -17,7 +17,9 @@ let zIndexCounter = 9;
 
 
 
-
+function getRandomDistance(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 
 
@@ -259,11 +261,6 @@ if (typeof PIXI === "undefined") {
 }
 
 
-
-
-function getRandomDistance(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 
 
 
