@@ -242,27 +242,35 @@ if (typeof PIXI === "undefined") {
 
 
 
+function getRandomDistance(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 
-function addCharacterToGame(name, buttonElement) {
+
+
+function addCharacterToGame(name, buttonElement, followMin = 30, followMax = 80) {
 // function addCharacterToGame(name) {
     if (addedCharacterNames.has(name)) {
         return; // PREVENT DUPLICATES //
     }
 
-    addedCharacterNames.add(name);
+    // addedCharacterNames.add(name);
 
     // DYNAMIC SPACING BASED ON HOW MANY CHARACTERS ARE ADDED //
-    let spacingBase = 50;
+    // let spacingBase = 50;
     // let spacing = Math.max(30, spacingBase - addedCharacters.length * 5);
     // NEVER LESS THAN 30PX APART //
 
     // RANDOMLY CHOOSE LEFT OR RIGHT //
-    const maxOffset = 80; // PIXELS AWAY FROM MAIN CHARACTER //
-    const minOffset = 30; // AVOID EXACT OVERLAP //
-    let direction = Math.random() < 0.5 ? -1 : 1; // RANDOMLY LEFT OR RIGHT //
-    let offset = Math.floor(Math.random() * (maxOffset - minOffset)) + minOffset;
-    let totalOffset = direction * offset;
+    const offset = getRandomDistance(followMin, followMax);
+    const direction = Math.random() < 0.5 ? -1 : 1;
+    const totalOffset = offset * direction;
+    // const maxOffset = 80; // PIXELS AWAY FROM MAIN CHARACTER //
+    // const minOffset = 30; // AVOID EXACT OVERLAP //
+    // let direction = Math.random() < 0.5 ? -1 : 1; // RANDOMLY LEFT OR RIGHT //
+    // let offset = Math.floor(Math.random() * (maxOffset - minOffset)) + minOffset;
+    // let totalOffset = direction * offset;
     // let totalOffset = direction * spacing * addedCharacters.length;
     // const offsetX = 50 + (addedCharacters.length * 60);
     // const offsetX = direction * nextOffset;
@@ -293,7 +301,7 @@ function addCharacterToGame(name, buttonElement) {
     label,zIndex = charGraphic.zIndex + 1;
     app.stage.addChild(label);
 
-    addedCharacters.push({ name, graphic: charGraphic, label });
+    addedCharacters.push({ name, graphic: charGraphic, label, follow_distance_min: followMin, follow_distance_max: followMax });
     addedCharacterNames.add(name); // TRACK NAME //
 
     // DISABLE OR REMOVE BUTTON //

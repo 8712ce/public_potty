@@ -5,6 +5,8 @@ class Character(models.Model):
     name = models.CharField(max_length=100, unique=True)
     toilet_meter_drain_rate = models.FloatField(help_text="Rate at which toilet meter depletese (lower = slower)")
     sprite_url = models.CharField(max_length=255)
+    follow_distance_min = models.IntegerField(default=30)
+    follow_distance_max = models.IntegerField(default=60)
 
     def __str__(self):
         return self.name
