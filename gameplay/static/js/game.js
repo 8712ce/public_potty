@@ -11,6 +11,7 @@ let currentChunkIndex = 0;
 let locationInChunk = 0; // WHICH OF THE 5 LOCATIONS IN THAT CHUNK //
 let locationWidth = 160; // CHUNKWIDTH / 5 //
 let addedCharacters = [];
+let addedCharacterNames = new Set();
 let zIndexCounter = 9;
 
 
@@ -242,7 +243,11 @@ if (typeof PIXI === "undefined") {
 
 
 
-function addCharacterToGame(name) {
+function addCharacterToGame(name, buttonElement) {
+    if (addedCharacterNames.has(name)) {
+        return; // PREVENT DUPLICATES //
+    }
+
     const offsetX = 50 + (addedCharacters.length * 60);
 
     const charGraphic = new PIXI.Graphics();
@@ -268,6 +273,13 @@ function addCharacterToGame(name) {
     app.stage.addChild(label);
 
     addedCharacters.push({ name, graphic: charGraphic, label });
+    addedCharacterNames.add(name); // TRACK NAME //
+
+    // DISABLE OR REMOVE BUTTON //
+    if (buttonElement) {
+        buttonElement.disabled = true;
+        buttonElement.innerText = "Added!"
+    }
 }
 
 
