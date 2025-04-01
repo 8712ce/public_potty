@@ -108,14 +108,19 @@ def game_view(request):
 
 
 def character_select_view(request):
+    # IF PLAYER ALREADY SELECTED A CHARACTER, GO STRAIGHT TO THE GAME #
+    if request.session.get("selected_character_id"):
+        return redirect("game")
+    
     if request.method == "POST":
         char_id = request.POST.get("character_id")
         if char_id:
             request.session["selected_character_id"] = char_id
             return redirect("game") # REDIRECT TO GAME VIEW
-    else:
-        characters = Character.objects.all()
-        return render(request, "gameplay/character_select.html", {"characters": characters})
+    
+    # GET REQUEST - SHOW THE CHARACTERS
+    characters = Character.objects.all()
+    return render(request, "gameplay/character_select.html", {"characters": characters})
 
 
 
