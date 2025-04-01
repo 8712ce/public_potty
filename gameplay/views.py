@@ -94,15 +94,23 @@ def game_view(request):
     if "selected_character_id" not in request.session:
         return redirect("select_character")
     
+    selected_id = request.session["selected_character_id"]
+    selected_character = Character.objects.get(id=selected_id)
+
+    # EXCLUDE THE SELECTED CHARACTER FROM THE LIST
+    other_characters = Character.objects.exclude(id=selected_id)
+    
     # MAYBE CREATE A STARTING CHUNK AT INDEX 0 SO THERE'S SOMETHING TO SEE RIGHT AWAY ON PAGE LOAD
     starting_chunk = get_or_create_chunk(request.session, 0)
 
-    char_id = request.session.get("selected_character_id")
-    character = None
-    if char_id:
-        character = Character.objects.get(id=char_id)
+    # char_id = request.session.get("selected_character_id")
+    # character = None
+    # if char_id:
+    #     character = Character.objects.get(id=char_id)
+    
     # PASS THESE TO THE TEMPLATE IF WE WANT TO DISPLAY THEM INITIALLY OR WE CAN PASS AN EMPTY LIST IF WE WANT THE FRONT-END TO REQUEST IT DYNAMICALLY
-    return render(request, 'gameplay/game.html', {"locations": starting_chunk, "character": character})
+    # return render(request, 'gameplay/game.html', {"locations": starting_chunk, "character": character})
+    return render(request, 'gameplay/game.html', {"locations": starting_chunk, "character": selected_character, "other_characters": other_characters,})
 
 
 
