@@ -306,7 +306,7 @@ function addCharacterToGame(name, buttonElement) {
     label.zIndex = charGraphic.zIndex + 1;
     app.stage.addChild(label);
 
-    addedCharacters.push({ name, graphic: charGraphic, label });
+    addedCharacters.push({ name, graphic: charGraphic, label, followMin: min, followMax: max });
     addedCharacterNames.add(name); // TRACK NAME //
 
     // DISABLE OR REMOVE BUTTON //
