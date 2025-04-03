@@ -162,26 +162,6 @@ function loadChunk(index) {
             console.log("Chunk data for index", index, data);
             // FOR NOW, JUST DISPLAY THEM IN THE .LOCATIONS-CONTAINER OR EVENTUALLY, INTEGRATE THEM INTO PIXI SCENE //
 
-            // const container = document.querySelector('.locations-container');
-            // container.innerHTML = ''; // CLEAR EXISTING //
-
-            // data.forEach(location => {
-            //     const div = document.createElement('div');
-            //     div.classList.add('location-card');
-            //     div.innerHTML = `
-            //         <h2>${location.type_display}${location.subtype_display ? " ("+ location.subtype_display +")" : ""}</h2>
-            //         ${location.name ? `<p>"${location.name}"</p>` : ""}
-            //         <p>Has restroom? ${location.has_restroom ? "Yes" : "No"}</p>
-            //         <p>Public? ${location.open_to_public ? "Yes" : "No"}</p>
-            //     `;
-            //     container.appendChild(div);
-            // });
-
-
-            // REMOVE OLD BUILDINGS IF WE ONLY WANT THIS CHUNK ON SCREEN //
-            // currentBuildings.forEach(b => app.stage.removeChild(b));
-            // currentBuildings = [];
-
             data.forEach((locData, i) => {
                 // 1. CREATE A NEW GRAPHICS OBJECT //
                 let building = new PIXI.Graphics();
@@ -276,26 +256,8 @@ function addCharacterToGame(name, buttonElement) {
     const max = parseInt(buttonElement.dataset.followMax, 10);
     const offset = getRandomDistance(min, max);
 
-    // addedCharacterNames.add(name);
-
-    // DYNAMIC SPACING BASED ON HOW MANY CHARACTERS ARE ADDED //
-    // let spacingBase = 50;
-    // let spacing = Math.max(30, spacingBase - addedCharacters.length * 5);
-    // NEVER LESS THAN 30PX APART //
-
-    // RANDOMLY CHOOSE LEFT OR RIGHT //
-    // const offset = getRandomDistance(followMin, followMax);
     const direction = Math.random() < 0.5 ? -1 : 1;
     const totalOffset = offset * direction;
-    // const maxOffset = 80; // PIXELS AWAY FROM MAIN CHARACTER //
-    // const minOffset = 30; // AVOID EXACT OVERLAP //
-    // let direction = Math.random() < 0.5 ? -1 : 1; // RANDOMLY LEFT OR RIGHT //
-    // let offset = Math.floor(Math.random() * (maxOffset - minOffset)) + minOffset;
-    // let totalOffset = direction * offset;
-    // let totalOffset = direction * spacing * addedCharacters.length;
-    // const offsetX = 50 + (addedCharacters.length * 60);
-    // const offsetX = direction * nextOffset;
-    // nextOffset += 40; // ENSURE SPACING INCREASES WITH EACH ADDED CHARACTER //
     
 
 
@@ -332,6 +294,22 @@ function addCharacterToGame(name, buttonElement) {
     }
 }
 
+
+
+
+function enterLocation(locationData) {
+    const characterName = selectedCharacterName || "You";
+    const hasRestroom = locationData.has_restroom ? "Yes" : "No";
+
+    const details = `
+        ${characterName} entered "${locationData.name || 'Unnamed Place'}".
+        Type: ${locationData.type_display}
+        Restroom Available? ${hasRestroom}
+        Open to Public? ${locationData.open_to_public ? "Yes" : "No"}
+    `;
+
+    alert(details);
+}
 
 
 
@@ -403,15 +381,55 @@ document.addEventListener("DOMContentLoaded", function () {
     // SIMPLE LEFT/RIGHT BUTTONS FOR TESTING CHUNK CHANGES //
     const leftButton = document.createElement('button');
     leftButton.innerText = "Move Left";
-    document.body.appendChild(leftButton);
+    // document.body.appendChild(leftButton);
+
+    // CREATE ENTER BUTTON //
+    const enterButton = document.createElement('button');
+    enterButton.innerText = "Enter";
 
     const rightButton = document.createElement('button');
     rightButton.innerText = "Move Right";
-    document.body.appendChild(rightButton);
+    // document.body.appendChild(rightButton);
 
+    // BUTTON CONTAINER //
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.textAlign = "center";
+    buttonContainer.style.margin = "20px";
+    buttonContainer.appendChild(leftButton);
+    buttonContainer.appendChild(enterButton);
+    buttonContainer.appendChild(rightButton);
 
+    document.body.appendChild(buttonContainer);
+
+    // EVENT LISTENERS //
     leftButton.addEventListener('click', moveLeftOneCard);
     rightButton.addEventListener('click', moveRightOneCard);
+    enterButton.addEventListener('click', () => {
+        const centerX = 400 + worldX; // PLAYER'S WORLD-ALIGNED POSITION //
+        let closest = null;
+        let minDistance = Infinity;
+
+        currentBuildings.forEach(obj => {
+            if (obj.locationData) {
+                const dist = Math.abs(obj.worldX - centerX);
+                if (dist < minDistance) {
+                    closest = obj;
+                    minDistance = dist;
+                }
+            }
+        });
+
+        if (closest && minDistance < 40) {
+            const loc = closest.locationData;
+            if (loc.open_to_public) {
+                enterLocation(loc);
+            } else {
+                alert("This location is not open to the public.");
+            }
+        } else {
+            alert("You're not in front of a location.");
+        }
+    });
 
 
 });
