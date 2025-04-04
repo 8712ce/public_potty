@@ -297,18 +297,37 @@ function addCharacterToGame(name, buttonElement) {
 
 
 
+// function enterLocation(locationData) {
+//     const characterName = selectedCharacterName || "You";
+//     const hasRestroom = locationData.has_restroom ? "Yes" : "No";
+
+//     const details = `
+//         ${characterName} entered "${locationData.name || 'Unnamed Place'}".
+//         Type: ${locationData.type_display}
+//         Restroom Available? ${hasRestroom}
+//         Open to Public? ${locationData.open_to_public ? "Yes" : "No"}
+//     `;
+
+//     alert(details);
+// }
+
 function enterLocation(locationData) {
     const characterName = selectedCharacterName || "You";
     const hasRestroom = locationData.has_restroom ? "Yes" : "No";
+    const isPublic = locationData.open_to_public ? "Yes" : "No";
 
-    const details = `
-        ${characterName} entered "${locationData.name || 'Unnamed Place'}".
-        Type: ${locationData.type_display}
-        Restroom Available? ${hasRestroom}
-        Open to Public? ${locationData.open_to_public ? "Yes" : "No"}
+    document.getElementById("modalTitle").textContent = `${characterName} enters: ${locationData.name || "Unnamed Place"}`;
+    document.getElementById("modalDetails").innerHTML = `
+        <strong>Type:</strong> ${locationData.type_display}<br>
+        <strong>Restroom Available?</strong> ${hasRestroom}<br>
+        <strong>Open to Public?</strong> ${isPublic}
     `;
 
-    alert(details);
+    document.getElementById("interiorModal").style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById("interiorModal").style.display = "none";
 }
 
 
@@ -424,10 +443,20 @@ document.addEventListener("DOMContentLoaded", function () {
             if (loc.open_to_public) {
                 enterLocation(loc);
             } else {
-                alert("This location is not open to the public.");
+                // alert("This location is not open to the public.");
+                document.getElementById("modalTitle").textContent = "Access Denied";
+                document.getElementById("modalDetails").innerHTML = `
+                    This location is <strong>not open to the public</strong>.
+                `;
+                document.getElementById("interiorModal").style.display = "block";
             }
         } else {
-            alert("You're not in front of a location.");
+            // alert("You're not in front of a location.");
+            document.getElementById("modalTitle").textContent = "No Location Nearby";
+            document.getElementById("modalDetails").innerHTML = `
+                You must be in front of a location to enter.
+            `;
+            document.getElementById("interiorModal").style.display = "block";
         }
     });
 
