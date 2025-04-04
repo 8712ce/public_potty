@@ -16,32 +16,6 @@
     <body>
         <h1>Game Loading...</h1>
 
-        <!-- CONTAINER FOR RANDOM LOCATIONS -->
-        <!-- <div class="locations-container">
-          {% for location in locations %}
-            <div class="location-card"> -->
-              <!-- LOCATION TYPE AND SUBTYPE -->
-              <!-- <h2>
-                {{ location.get_type_display }}
-                {% if location.subtype %}
-                  ({{ location.get_subtype_display }})
-                {% endif %}
-              </h2> -->
-
-              <!-- IF THE LOCATION HAS A CUSTOM NAME -->
-              <!-- {% if location.name %}
-                <p>"{{ location.name }}"</p>
-              {% endif %}
-
-              VARIOUS BOOLEANS
-              <p>Has restroom? {{ location.has_restroom|yesno:"Yes,No" }}</p>
-              <p>Open Now? {{ location.open_now|yesno:"Yes,No" }}</p>
-              <p>Public? {{ location.open_to_public|yesno:"Yes,No" }}</p>
-            </div>
-          {% endfor %}
-        </div> -->
-
-
         <div id="add-character-butons" style="text-align: center; margin: 20px 0;">
           {% for char in other_characters %}
             <button
@@ -60,5 +34,12 @@
           style="position: absolute; top: 10px; right: 10px; padding: 8px 12px; background: #c0392b; color: white; border-radius: 5px; text-decoration: none; font-weight: bold;">
           Change Character
         </a>
+
+        <div id="interiorModal" style="display:none; position:fixed; top:10%; left:50%; transform:translateX(-50%); background:white; border:2px solid #ccc; padding:20px; z-index: 9999;">
+          <h2 id="modalTitle"></h2>
+          <p id="modalDetails"></p>
+          <button onclick="closeModal()">Close</button>
+
+        </div>
     </body>
 </html>
