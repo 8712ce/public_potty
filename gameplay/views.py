@@ -4,6 +4,8 @@ from django.conf import settings
 from .models import Location
 from .models import Character
 import random
+from django.utils import timezone
+import time
 
 
 def generate_random_chunk(num_locations=5):
@@ -110,7 +112,7 @@ def game_view(request):
     
     # PASS THESE TO THE TEMPLATE IF WE WANT TO DISPLAY THEM INITIALLY OR WE CAN PASS AN EMPTY LIST IF WE WANT THE FRONT-END TO REQUEST IT DYNAMICALLY
     # return render(request, 'gameplay/game.html', {"locations": starting_chunk, "character": character})
-    return render(request, 'gameplay/game.html', {"locations": starting_chunk, "character": selected_character, "other_characters": other_characters,})
+    return render(request, 'gameplay/game.html', {"locations": starting_chunk, "character": selected_character, "other_characters": other_characters, "timestamp": int(time.time()) })
 
 
 
