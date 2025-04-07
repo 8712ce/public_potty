@@ -23,6 +23,11 @@ def generate_random_chunk(num_locations=5):
             "subtype_display": location.get_subtype_display() if location.subtype else "",
             "name": location.name or "",
             "has_restroom": location.has_restroom,
+            "restroom_requires_permission": location.restroom_requires_permission,
+            "restroom_occupied": location.restroom_occupied,
+            "restroom_out_of_order": location.restroom_out_of_order,
+            "restroom_visible": location.restroom_visible,
+            "restroom_line": location.restroom_line,
             "open_now": location.open_now,
             "open_to_public": location.open_to_public,
         }

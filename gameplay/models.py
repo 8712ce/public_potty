@@ -76,6 +76,11 @@ class Location(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
 
     has_restroom = models.BooleanField(default=False)
+    restroom_requires_permission = models.BooleanField(default=False)
+    restroom_occupied = models.BooleanField(default=False)
+    restroom_out_of_order = models.BooleanField(default=False)
+    restroom_visible = models.BooleanField(default=False)
+    restroom_line = models.IntegerField(default=0)
 
     open_now = models.BooleanField(default=True)
 
@@ -102,5 +107,18 @@ class Location(models.Model):
             self.subtype = random.choice([1, 2, 3])
         else:
             self.subtype = None
+
+        if self.has_restroom:
+            self.restroom_requires_permission = random.choice([True, False])
+            self.restroom_occupied = random.choice([True, False])
+            self.restroom_out_of_order = random.choice([True, False])
+            self.restroom_visible = random.choice([True, False])
+            self.restroom_line = random.randint(0, 5)
+        else:
+            self.restroom_requires_permission = False
+            self.restroom_occupied = False
+            self.restroom_out_of_order = False
+            self.restroom_visible = False
+            self.restroom_line = 0
             
         # self.save()
