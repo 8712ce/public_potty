@@ -14,6 +14,7 @@ let addedCharacters = [];
 let addedCharacterNames = new Set();
 let zIndexCounter = 9;
 // let nextOffset = 40; // STARTING DISTANCE FROM THE CENTER, TWEAK AS NEEDED //
+let insideLocation = false;
 
 
 
@@ -89,6 +90,8 @@ function animateWorldX(targetX, duration = 300) {
 
 // FUNCTIONS TO MOVE ONE CARD AT A TIME //
 function moveRightOneCard() {
+    if (insideLocation) rerturn;
+
     locationInChunk++;
 
     // PRE-FETCH NEXT CHUNK IF WERE NEAR THE 5TH BUILDING //
@@ -119,6 +122,8 @@ function moveRightOneCard() {
 
 
 function moveLeftOneCard() {
+    if (insideLocation) return;
+    
     locationInChunk--;
 
     // PRE-FETCH TEH PREVIOUS CHUNK IF WE'RE NEAR THE LOCATIONINCHUNK=1 OR 0 //
@@ -297,19 +302,6 @@ function addCharacterToGame(name, buttonElement) {
 
 
 
-// function enterLocation(locationData) {
-//     const characterName = selectedCharacterName || "You";
-//     const hasRestroom = locationData.has_restroom ? "Yes" : "No";
-
-//     const details = `
-//         ${characterName} entered "${locationData.name || 'Unnamed Place'}".
-//         Type: ${locationData.type_display}
-//         Restroom Available? ${hasRestroom}
-//         Open to Public? ${locationData.open_to_public ? "Yes" : "No"}
-//     `;
-
-//     alert(details);
-// }
 
 function enterLocation(locationData) {
     const characterName = selectedCharacterName || "You";
@@ -323,14 +315,24 @@ function enterLocation(locationData) {
         <strong>Open to Public?</strong> ${isPublic}
     `;
 
-    document.getElementById("interiorModal").style.display = "block";
+    // document.getElementById("interiorModal").style.display = "block";
+    const modal = document.getElementById("interiorModal");
+    modal.classList.remove("modal-hidden");
+    modal.classList.add("show");
+
+    insideLocation = true;
 }
 
 
 
 
 function closeModal() {
-    document.getElementById("interiorModal").style.display = "none";
+    // document.getElementById("interiorModal").style.display = "none";
+    const modal = document.getElementById("interiorModal");
+    modal.classList.remove("show");
+    modal.classList.add("modal-hidden");
+
+    insideLocation = false;
 }
 
 
