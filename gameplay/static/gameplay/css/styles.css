@@ -22,13 +22,25 @@
 
 /* INTERIOR MODAL CSS */
 
-#interiorModal {
+#modalOverlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9998;
+    display: none;
+}
+
+#interiorModal {
+    position: fixed;
+    top: 5vh;
+    left: 5vw;
+    width: 90vw;
+    height: 90vh;
     background: white;
+    border: 2px solid #ccc;
     z-index: 9999;
     padding: 40px;
     box-sizing: border-box;
@@ -53,4 +65,29 @@
 
 .modal-hidden {
     display: none;
+}
+
+#modalOverlay.show,
+#interiorModal.show {
+    display: block;
+}
+
+.hint-message {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translate(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    z-index: 10000;
+    opacity: 1;
+    transition: opacity 1s ease;
+    pointer-events: none;
+}
+
+.hint-message.fade-out {
+    opacity: 0;
 }

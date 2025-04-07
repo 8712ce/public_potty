@@ -123,7 +123,7 @@ function moveRightOneCard() {
 
 function moveLeftOneCard() {
     if (insideLocation) return;
-    
+
     locationInChunk--;
 
     // PRE-FETCH TEH PREVIOUS CHUNK IF WE'RE NEAR THE LOCATIONINCHUNK=1 OR 0 //
@@ -304,6 +304,8 @@ function addCharacterToGame(name, buttonElement) {
 
 
 function enterLocation(locationData) {
+    insideLocation = true;
+
     const characterName = selectedCharacterName || "You";
     const hasRestroom = locationData.has_restroom ? "Yes" : "No";
     const isPublic = locationData.open_to_public ? "Yes" : "No";
@@ -316,23 +318,42 @@ function enterLocation(locationData) {
     `;
 
     // document.getElementById("interiorModal").style.display = "block";
-    const modal = document.getElementById("interiorModal");
-    modal.classList.remove("modal-hidden");
-    modal.classList.add("show");
-
-    insideLocation = true;
+    // const modal = document.getElementById("interiorModal");
+    // modal.classList.remove("modal-hidden");
+    // modal.classList.add("show");
+    document.getElementById("interiorModal").classList.add("show");
+    document.getElementById("modalOverlay").classList.add("show");
 }
 
 
 
 
 function closeModal() {
-    // document.getElementById("interiorModal").style.display = "none";
-    const modal = document.getElementById("interiorModal");
-    modal.classList.remove("show");
-    modal.classList.add("modal-hidden");
-
     insideLocation = false;
+    // document.getElementById("interiorModal").style.display = "none";
+    // const modal = document.getElementById("interiorModal");
+    // modal.classList.remove("show");
+    // modal.classList.add("modal-hidden");
+    document.getElementById("interiorModal").classList.remove("show");
+    document.getElementById("modalOverlay").classList.remove("show");
+}
+
+
+
+
+function showHint(message) {
+    const hint = document.createElement("div");
+    hint.textContent = message;
+    hint.className = "hint-message";
+    document.body.appendChild(hint);
+
+    setTimeout(() => {
+        hint.classList.add("fade-out");
+    }, 1000);
+
+    setTimeout(() => {
+        hint.remove();
+    }, 2000);
 }
 
 
@@ -448,20 +469,22 @@ document.addEventListener("DOMContentLoaded", function () {
             if (loc.open_to_public) {
                 enterLocation(loc);
             } else {
+                showHint("This location is not open to the public.");
                 // alert("This location is not open to the public.");
-                document.getElementById("modalTitle").textContent = "Access Denied";
-                document.getElementById("modalDetails").innerHTML = `
-                    This location is <strong>not open to the public</strong>.
-                `;
-                document.getElementById("interiorModal").style.display = "block";
+                // document.getElementById("modalTitle").textContent = "Access Denied";
+                // document.getElementById("modalDetails").innerHTML = `
+                //     This location is <strong>not open to the public</strong>.
+                // `;
+                // document.getElementById("interiorModal").style.display = "block";
             }
         } else {
+            showHint("You must be in front of a location to enter.")
             // alert("You're not in front of a location.");
-            document.getElementById("modalTitle").textContent = "No Location Nearby";
-            document.getElementById("modalDetails").innerHTML = `
-                You must be in front of a location to enter.
-            `;
-            document.getElementById("interiorModal").style.display = "block";
+            // document.getElementById("modalTitle").textContent = "No Location Nearby";
+            // document.getElementById("modalDetails").innerHTML = `
+            //     You must be in front of a location to enter.
+            // `;
+            // document.getElementById("interiorModal").style.display = "block";
         }
     });
 
