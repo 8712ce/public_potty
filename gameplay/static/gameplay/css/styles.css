@@ -19,3 +19,38 @@
 .location-card p {
     margin: 0.3rem 0;
 }
+
+/* INTERIOR MODAL CSS */
+
+#interiorModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: white;
+    z-index: 9999;
+    padding: 40px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    font-family: sans-serif;
+    display: none;
+}
+
+#interiorModal h2 {
+    margin-top: 0;
+}
+
+#interiorModal button {
+    margin-top: 20px;
+    padding: 10px 16px;
+    font-size: 16px;
+}
+
+#interiorModal.show {
+    display: block;
+}
+
+.modal-hidden {
+    display: none;
+}

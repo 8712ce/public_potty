@@ -326,6 +326,9 @@ function enterLocation(locationData) {
     document.getElementById("interiorModal").style.display = "block";
 }
 
+
+
+
 function closeModal() {
     document.getElementById("interiorModal").style.display = "none";
 }
