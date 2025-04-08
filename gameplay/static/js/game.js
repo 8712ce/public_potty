@@ -368,11 +368,80 @@ function enterLocation(locationData) {
 
 
 
+function handleEmployeeHelp(locationData) {
+    // DON'T REPEAT IF ALREADY HANDLED PERMISSION AND NO CODE IS INVOLVED //
+    if (locationData.help_received && !locationData.restroom_requires_code) return;
+
+    let message = "";
+
+    if (locationData.restroom_out_of_order) {
+        message += "The employee shrugs and says, 'Sorry, the restroom is out of order.'<br>";
+
+        // SET HELP AS RECEIVED ONLY IF THERE'S NO CODE INVOLVED //
+        if (!locationData.restroom_requires_code) {
+            locationData.help_received = true;
+
+            // HIDE BUTTON ONLY IN THIS SPECIFIC CASE //
+            const helpButton = document.querySelector("#modalDetails button");
+            if (helpButton) helpButton.style.display = "none";
+        }
+    } else {
+        // ONLY GRANT PERMISSION ONCE //
+        if (locationData.restroom_requires_permission && !locationData.permission_granted) {
+            message += "The employee nods and says, 'Go ahead and use the restroom.'<br>";
+            locationData.permission_granted = true;
+        }
+
+        // ALWAYS GIVE CODE IF REQUESTED AND IT EXISTS //
+        if (locationData.restroom_requires_code && locationData.restroom_code) {
+            message += `The employee whispers the code: <strong>${locationData.restroom_code}</strong><br>`;
+        } else if (locationData.restroom_requires_code) {
+            message += "The employee looks confused. 'Uh...I don't remember the code.'<br>";
+        }
+    }
+
+    // ONLY GRANT PERMISSION ONCE //
+    // if (locationData.restroom_requires_permission && !locationData.permission_granted) {
+    //     message += "The employee nods and says, 'Go ahead and use the restroom.'<br>";
+    //     locationData.permission_granted = true;
+    //     locationData.help_received = true;
+    // }
+
+    // SHARE CODE AS MANY TIMES AS NEEDED //
+    // if (locationData.restroom_requires_code && locationData.restroom_code) {
+    //     message += `The employee whispers the code: <strong>${locationData.restroom_code}</strong><br>`;
+    // } else if (locationData.restroom_requires_code) {
+    //     message += "The employee looks confused. 'Uh...I don't remember the code.'<br>";
+    // }
+
+    // BLOCK FURTHER HELP REQUESTS //
+    // locationData.help_received = true;
+
+    // UPDATE MODAL TO REFLECT CHANGES //
+    document.getElementById("modalDetails").innerHTML += `<div style="margin-top:10px;">${message}</div>`;
+
+    // // ONLY HID BUTTON IF PERMISSION WAS TEH ONLY THING NEEDED AND IT'S GRANTED //
+    // const helpButton = document.querySelector("#modalDetails button");
+    // if (helpButton && locationData.restroom_requires_permission) {
+    //     helpButton.style.display = "none";
+    // }
+
+    // SHOW "ENTER RESTROOM" BUTTON NOW //
+    showEnterRestroomButton(locationData);
+}
+
+
+
 
 function closeModal() {
     insideLocation = false;
     document.getElementById("interiorModal").classList.remove("show");
     document.getElementById("modalOverlay").classList.remove("show");
+
+    if (currentLocationData) {
+        currentLocationData.permission_granted = false;
+        currentLocationData.help_received = false;
+    }
 }
 
 
