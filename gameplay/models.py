@@ -105,8 +105,9 @@ class Location(models.Model):
         self.type = random.choice([t[0] for t in self.LOCATION_TYPES])
         # self.has_restroom = random.choice([True, False])
         self.open_now = random.choice([True, False])
-        # self.open_to_public = random.choice([True, False])
+        
         # OPEN TO PUBLIC PROBABILITY
+        # self.open_to_public = random.choice([True, False])
         if self.type in ["bar", "restaurant", "store", "gas_station", "park"]:
             self.open_to_public = random.choices([True, False], weights=[9, 1])[0]
         elif self.type in ["office"]:
@@ -131,7 +132,22 @@ class Location(models.Model):
         self.restroom_occupied = random.choice([True, False]) if self.has_restroom else False
         self.restroom_out_of_order = random.choices([True, False], weights=[1, 4])[0] if self.has_restroom else False
         self.restroom_line = random.randint(0, 5) if self.has_restroom else 0
-        self.restroom_requires_code = random.choice([True, False]) if self.has_restroom else False
+
+        # ALIGN PROBABILITY OF REQUIRING A CODE TO SUBTYPE
+        # self.restroom_requires_code = random.choice([True, False]) if self.has_restroom else False
+        if self.has_restroom:
+            code_weights = {
+                1: [1, 9], # FANCY: 10% CHANCE OF REQUIRING A CODE
+                2: [2, 8], # NICE: 20%
+                3: [4, 6], # AVERAGE: 40%
+                4: [6, 4], # POOR: 60%
+                5: [8, 2], # SCUZZY: 80%
+            }
+            weights = code_weights.get(self.subtype, [4, 6]) # DEFAULT TO 40/60 IF SOMEHOW INVALID
+            self.restroom_requires_code = random.choices([True, False], weights=weights)[0]
+        else:
+            self.restroom_requires_code = False
+
         self.restroom_code = (
             f"{random.randint(0, 9999):04}" if self.restroom_requires_code else None
         )
