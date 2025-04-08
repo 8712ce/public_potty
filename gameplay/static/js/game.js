@@ -333,13 +333,7 @@ function enterLocation(locationData) {
     const visibilityNote = isVisible ? "(You can see where it is!)" : "(You'll need to ask for directions.)";
 
     document.getElementById("modalTitle").textContent = `${characterName} enters: ${locationData.name || "Unnamed Place"}`;
-    // document.getElementById("modalDetails").innerHTML = `
-    //     <strong>Type:</strong> ${locationData.type_display}<br>
-    //     <strong>Restroom Available?</strong> ${hasRestroom ? "Yes" : "No"}<br>
-    //     <strong>Open to Public?</strong> ${isPublic ? "Yes" : "No"}<br><br>
-    //     <strong>Restroom Status:</strong> ${restroomMessage}<br>
-    //     ${hasRestroom && !isOutOfOrder ? `<em>${visibilityNote}</em>` : ""}
-    // `;
+
     let modalHtml = `
         <strong>Type:</strong> ${locationData.type_display}<br>
         <strong>Has Restroom?</strong> ${hasRestroom ? "Yes" : "No"}<br>
@@ -357,6 +351,16 @@ function enterLocation(locationData) {
     }
 
     document.getElementById("modalDetails").innerHTML = modalHtml;
+
+    const needsHelp = requiresPermission || locationData.restroom_requires_code;
+
+    if (needsHelp) {
+        const helpButton = document.createElement('button');
+        helpButton.innerText = "Ask Employee for Help";
+        helpButton.onclick = () => handleEmployeeHelp(locationData);
+        helpButton.style.marginTop = "10px";
+        document.getElementById("modalDetails").appendChild(helpButton);
+    }
 
     document.getElementById("interiorModal").classList.add("show");
     document.getElementById("modalOverlay").classList.add("show");
