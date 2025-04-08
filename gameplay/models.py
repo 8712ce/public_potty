@@ -81,11 +81,11 @@ class Location(models.Model):
     restroom_out_of_order = models.BooleanField(default=False)
     restroom_visible = models.BooleanField(default=False)
     restroom_line = models.IntegerField(default=0)
+    restroom_requires_code = models.BooleanField(default=False)
+    restroom_code = models.CharField(max_length=4, blank=True, null=True)
 
     open_now = models.BooleanField(default=True)
-
     open_to_public = models.BooleanField(default=True)
-
     hours_open = models.CharField(max_length=50, blank=True, null=True, help_text="For display, e.g., '9AM - 5PM'")
 
     subtype = models.IntegerField(choices=SUBTYPES, blank=True, null=True, help_text="Only applies to stores, bars, and restaurants")
@@ -103,22 +103,22 @@ class Location(models.Model):
         self.open_to_public = random.choice([True, False])
 
         # ASSIGN A SUBTYPE ONLY FOR STORES, BARS, OR RESTAURANTS #
-        if self.type in ["store", "bar", "restaurant"]:
-            self.subtype = random.choice([1, 2, 3])
-        else:
-            self.subtype = None
+        # if self.type in ["store", "bar", "restaurant"]:
+        #     self.subtype = random.choice([1, 2, 3])
+        # else:
+        #     self.subtype = None
+        self.subtype = (
+            random.choice([1, 2, 3]) if self.type in ["store", "bar", "restaurant"] else None
+        )
 
-        if self.has_restroom:
-            self.restroom_requires_permission = random.choice([True, False])
-            self.restroom_occupied = random.choice([True, False])
-            self.restroom_out_of_order = random.choice([True, False])
-            self.restroom_visible = random.choice([True, False])
-            self.restroom_line = random.randint(0, 5)
-        else:
-            self.restroom_requires_permission = False
-            self.restroom_occupied = False
-            self.restroom_out_of_order = False
-            self.restroom_visible = False
-            self.restroom_line = 0
+        self.restroom_visible = random.choice([True, False]) if self.has_restroom else False
+        self.restroom_requires_permission = random.choice([True, False]) if self.has_restroom else False
+        self.restroom_occupied = random.choice([True, False]) if self.has_restroom else False
+        self.restroom_out_of_order = random.choice([True, False]) if self.has_restroom else False
+        self.restroom_line = random.randint(0, 5) if self.has_restroom else 0
+        self.restroom_requires_code = random.choice([True, False]) if self.has_restroom else False
+        self.restroom_code = (
+            f"{random.randint(0, 9999):04}" if self.restroom_requires_code else None
+        )
             
         # self.save()
