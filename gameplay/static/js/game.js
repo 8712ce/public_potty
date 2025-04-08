@@ -333,13 +333,30 @@ function enterLocation(locationData) {
     const visibilityNote = isVisible ? "(You can see where it is!)" : "(You'll need to ask for directions.)";
 
     document.getElementById("modalTitle").textContent = `${characterName} enters: ${locationData.name || "Unnamed Place"}`;
-    document.getElementById("modalDetails").innerHTML = `
+    // document.getElementById("modalDetails").innerHTML = `
+    //     <strong>Type:</strong> ${locationData.type_display}<br>
+    //     <strong>Restroom Available?</strong> ${hasRestroom ? "Yes" : "No"}<br>
+    //     <strong>Open to Public?</strong> ${isPublic ? "Yes" : "No"}<br><br>
+    //     <strong>Restroom Status:</strong> ${restroomMessage}<br>
+    //     ${hasRestroom && !isOutOfOrder ? `<em>${visibilityNote}</em>` : ""}
+    // `;
+    let modalHtml = `
         <strong>Type:</strong> ${locationData.type_display}<br>
-        <strong>Restroom Available?</strong> ${hasRestroom ? "Yes" : "No"}<br>
+        <strong>Has Restroom?</strong> ${hasRestroom ? "Yes" : "No"}<br>
         <strong>Open to Public?</strong> ${isPublic ? "Yes" : "No"}<br><br>
         <strong>Restroom Status:</strong> ${restroomMessage}<br>
-        ${hasRestroom && !isOutOfOrder ? `<em>${visibilityNote}</em>` : ""}
+        ${hasRestroom && !isOutOfOrder ? `<em>${visibilityNote}</em><br>` : ""}
     `;
+
+    if (hasRestroom && !isOutOfOrder) {
+        if (locationData.restroom_requires_code) {
+            modalHtml += `<strong>This restroom requires a code:</strong> ${locationData.restroom_code}<br>`;
+        } else {
+            modalHtml += `<strong>No code required for the restroom.</strong><br>`;
+        }
+    }
+
+    document.getElementById("modalDetails").innerHTML = modalHtml;
 
     document.getElementById("interiorModal").classList.add("show");
     document.getElementById("modalOverlay").classList.add("show");
