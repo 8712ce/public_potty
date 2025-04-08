@@ -307,20 +307,40 @@ function enterLocation(locationData) {
     insideLocation = true;
 
     const characterName = selectedCharacterName || "You";
-    const hasRestroom = locationData.has_restroom ? "Yes" : "No";
-    const isPublic = locationData.open_to_public ? "Yes" : "No";
+    const hasRestroom = locationData.has_restroom;
+    const isPublic = locationData.open_to_public;
+    const requiresPermission = locationData.restroom_requires_permission;
+    const isOccupied = locationData.restroom_occupied;
+    const isOutOfOrder = locationData.restroom_out_of_order;
+    const isVisible = locationData.restroom_visible;
+    const lineCount = locationData.restroom_line;
+
+    let restroomMessage = "";
+    if (!hasRestroom) {
+        restroomMessage = "This location does not have a restroom.";
+    } else if (isOutOfOrder) {
+        restroomMessage = "The restroom is currently out of order.";
+    } else if (isOccupied) {
+        restroomMessage = "The restroom is currently occupied.";
+    } else if (requiresPermission) {
+        restroomMessage = "You'll need to ask an employee for permission to use the restroom.";
+    } else if (lineCount > 0) {
+        restroomMessage = `There ${lineCount === 1 ? "is" : "are"} ${lineCount} person${lineCount > 1 ? "s" : ""} in line for the restroom.`;
+    } else {
+        restroomMessage = "The restroom is available!";
+    }
+
+    const visibilityNote = isVisible ? "(You can see where it is!)" : "(You'll need to ask for directions.)";
 
     document.getElementById("modalTitle").textContent = `${characterName} enters: ${locationData.name || "Unnamed Place"}`;
     document.getElementById("modalDetails").innerHTML = `
         <strong>Type:</strong> ${locationData.type_display}<br>
-        <strong>Restroom Available?</strong> ${hasRestroom}<br>
-        <strong>Open to Public?</strong> ${isPublic}
+        <strong>Restroom Available?</strong> ${hasRestroom ? "Yes" : "No"}<br>
+        <strong>Open to Public?</strong> ${isPublic ? "Yes" : "No"}<br><br>
+        <strong>Restroom Status:</strong> ${restroomMessage}<br>
+        ${hasRestroom && !isOutOfOrder ? `<em>${visibilityNote}</em>` : ""}
     `;
 
-    // document.getElementById("interiorModal").style.display = "block";
-    // const modal = document.getElementById("interiorModal");
-    // modal.classList.remove("modal-hidden");
-    // modal.classList.add("show");
     document.getElementById("interiorModal").classList.add("show");
     document.getElementById("modalOverlay").classList.add("show");
 }
@@ -330,10 +350,6 @@ function enterLocation(locationData) {
 
 function closeModal() {
     insideLocation = false;
-    // document.getElementById("interiorModal").style.display = "none";
-    // const modal = document.getElementById("interiorModal");
-    // modal.classList.remove("show");
-    // modal.classList.add("modal-hidden");
     document.getElementById("interiorModal").classList.remove("show");
     document.getElementById("modalOverlay").classList.remove("show");
 }
