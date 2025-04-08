@@ -67,8 +67,10 @@ class Location(models.Model):
 
     SUBTYPES = [
         (1, "Fancy"),
-        (2, "Average"),
-        (3, "Scuzzy"),
+        (2, "Nice"),
+        (3, "Average"),
+        (4, "Poor"),
+        (5, "Scuzzy"),
     ]
 
     type = models.CharField(max_length=50, choices=LOCATION_TYPES)
@@ -88,12 +90,15 @@ class Location(models.Model):
     open_to_public = models.BooleanField(default=True)
     hours_open = models.CharField(max_length=50, blank=True, null=True, help_text="For display, e.g., '9AM - 5PM'")
 
-    subtype = models.IntegerField(choices=SUBTYPES, blank=True, null=True, help_text="Only applies to stores, bars, and restaurants")
+    subtype = models.IntegerField(choices=SUBTYPES, blank=True, null=True, help_text="Applies to all locations")
 
+    # def __str__(self):
+    #     if self.subtype and self.type in ["store", "bar", "restaurant"]:
+    #         return f"{self.get_type_display()} ({self.get_subtype_display()})"
+    #     return self.name or f"{self.get_type_display()}"
     def __str__(self):
-        if self.subtype and self.type in ["store", "bar", "restaurant"]:
-            return f"{self.get_type_display()} ({self.get_subtype_display()})"
-        return self.name or f"{self.get_type_display()}"
+        subtype_display = self.get_subtype_display() if self.subtype else ""
+        return f"{subtype_display} {self.get_type_display()}".strip() or self.name or "Unnamed Location"
     
     def randomize_location(self):
         # EXAMPLE METHOD TO RANDOMLY ASSIGN ATTRIBUTES TO LOCATIONS #
@@ -102,14 +107,10 @@ class Location(models.Model):
         self.open_now = random.choice([True, False])
         self.open_to_public = random.choice([True, False])
 
-        # ASSIGN A SUBTYPE ONLY FOR STORES, BARS, OR RESTAURANTS #
-        # if self.type in ["store", "bar", "restaurant"]:
-        #     self.subtype = random.choice([1, 2, 3])
-        # else:
-        #     self.subtype = None
-        self.subtype = (
-            random.choice([1, 2, 3]) if self.type in ["store", "bar", "restaurant"] else None
-        )
+        # self.subtype = (
+        #     random.choice([1, 2, 3]) if self.type in ["store", "bar", "restaurant"] else None
+        # )
+        self.subtype = random.randint(1, 5)
 
         self.restroom_visible = random.choice([True, False]) if self.has_restroom else False
         self.restroom_requires_permission = random.choice([True, False]) if self.has_restroom else False
