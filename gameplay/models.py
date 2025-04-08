@@ -114,7 +114,7 @@ class Location(models.Model):
         self.restroom_visible = random.choice([True, False]) if self.has_restroom else False
         self.restroom_requires_permission = random.choice([True, False]) if self.has_restroom else False
         self.restroom_occupied = random.choice([True, False]) if self.has_restroom else False
-        self.restroom_out_of_order = random.choice([True, False]) if self.has_restroom else False
+        self.restroom_out_of_order = random.choices([True, False], weights=[1, 4])[0] if self.has_restroom else False
         self.restroom_line = random.randint(0, 5) if self.has_restroom else 0
         self.restroom_requires_code = random.choice([True, False]) if self.has_restroom else False
         self.restroom_code = (

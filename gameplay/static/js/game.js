@@ -352,7 +352,7 @@ function enterLocation(locationData) {
 
     document.getElementById("modalDetails").innerHTML = modalHtml;
 
-    const needsHelp = requiresPermission || locationData.restroom_requires_code;
+    const needsHelp = hasRestroom && (requiresPermission || locationData.restroom_requires_code || !isVisible);
 
     if (needsHelp) {
         const helpButton = document.createElement('button');
@@ -385,9 +385,18 @@ function handleEmployeeHelp(locationData) {
             const helpButton = document.querySelector("#modalDetails button");
             if (helpButton) helpButton.style.display = "none";
         }
+
     } else {
-        // ONLY GRANT PERMISSION ONCE //
-        if (locationData.restroom_requires_permission && !locationData.permission_granted) {
+        // IF RESTROOM IS NOT VISIBLE AND PLAYER HASN'T BEEN SHOWN DIRECTIONS //
+        if (!locationData.restroom_visible && !locationData.directions_given) {
+            message += "The empolyee says, 'It's right over there.'<br>";
+            locationData.directions_given = true;
+
+            // IMPLICITLY GRANT PERMISSION TOO //
+            if (locationData.restroom_requires_permission && !locationData.permission_granted) {
+                locationData.permission_granted = true;
+            }
+        } else if (locationData.restroom_requires_permission && !locationData.permission_granted) {
             message += "The employee nods and says, 'Go ahead and use the restroom.'<br>";
             locationData.permission_granted = true;
         }
@@ -399,23 +408,6 @@ function handleEmployeeHelp(locationData) {
             message += "The employee looks confused. 'Uh...I don't remember the code.'<br>";
         }
     }
-
-    // ONLY GRANT PERMISSION ONCE //
-    // if (locationData.restroom_requires_permission && !locationData.permission_granted) {
-    //     message += "The employee nods and says, 'Go ahead and use the restroom.'<br>";
-    //     locationData.permission_granted = true;
-    //     locationData.help_received = true;
-    // }
-
-    // SHARE CODE AS MANY TIMES AS NEEDED //
-    // if (locationData.restroom_requires_code && locationData.restroom_code) {
-    //     message += `The employee whispers the code: <strong>${locationData.restroom_code}</strong><br>`;
-    // } else if (locationData.restroom_requires_code) {
-    //     message += "The employee looks confused. 'Uh...I don't remember the code.'<br>";
-    // }
-
-    // BLOCK FURTHER HELP REQUESTS //
-    // locationData.help_received = true;
 
     // UPDATE MODAL TO REFLECT CHANGES //
     document.getElementById("modalDetails").innerHTML += `<div style="margin-top:10px;">${message}</div>`;
