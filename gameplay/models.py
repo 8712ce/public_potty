@@ -103,9 +103,23 @@ class Location(models.Model):
     def randomize_location(self):
         # EXAMPLE METHOD TO RANDOMLY ASSIGN ATTRIBUTES TO LOCATIONS #
         self.type = random.choice([t[0] for t in self.LOCATION_TYPES])
-        self.has_restroom = random.choice([True, False])
+        # self.has_restroom = random.choice([True, False])
         self.open_now = random.choice([True, False])
-        self.open_to_public = random.choice([True, False])
+        # self.open_to_public = random.choice([True, False])
+        # OPEN TO PUBLIC PROBABILITY
+        if self.type in ["bar", "restaurant", "store", "gas_station", "park"]:
+            self.open_to_public = random.choices([True, False], weights=[9, 1])[0]
+        elif self.type in ["office"]:
+            self.open_to_public = random.choices([True, False], weights=[3, 7])[0]
+        else: # HOUSES, APARTMENTS
+            self.open_to_public = random.choices([True, False], weights=[1, 9])[0]
+        
+        if self.type in ["bar", "restaurant", "gas_station"]:
+            self.has_restroom = random.choices([True, False], weights=[9, 1])[0]
+        elif self.type in ["store", "office", "park"]:
+            self.has_restroom = random.choices([True, False], weights=[6, 4])[0]
+        else: # APARTMENTS, HOUSES //
+            self.has_restroom = random.choices([True, False], weights=[2, 8])[0]
 
         # self.subtype = (
         #     random.choice([1, 2, 3]) if self.type in ["store", "bar", "restaurant"] else None
