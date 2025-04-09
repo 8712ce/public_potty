@@ -122,16 +122,27 @@ class Location(models.Model):
         else: # APARTMENTS, HOUSES //
             self.has_restroom = random.choices([True, False], weights=[2, 8])[0]
 
-        # self.subtype = (
-        #     random.choice([1, 2, 3]) if self.type in ["store", "bar", "restaurant"] else None
-        # )
         self.subtype = random.randint(1, 5)
 
         self.restroom_visible = random.choice([True, False]) if self.has_restroom else False
         self.restroom_requires_permission = random.choice([True, False]) if self.has_restroom else False
         self.restroom_occupied = random.choice([True, False]) if self.has_restroom else False
-        self.restroom_out_of_order = random.choices([True, False], weights=[1, 4])[0] if self.has_restroom else False
         self.restroom_line = random.randint(0, 5) if self.has_restroom else 0
+
+        # LINK PROBABILITY OF OUT OF ORDER STATUS TO SUBTYPE
+        # self.restroom_out_of_order = random.choices([True, False], weights=[1, 4])[0] if self.has_restroom else False
+        if self.has_restroom:
+            out_of_order_weights = {
+                1: [1, 9],
+                2: [2, 8],
+                3: [3, 7],
+                4: [4, 6],
+                5: [5, 5],
+            }
+            ooo_weights = out_of_order_weights.get(self.subtype, [3, 7]) # DEFAULT TO 30%
+            self.restroom_out_of_order = random.choices([True, False], weights=ooo_weights)[0]
+        else:
+            self.restroom_out_of_order = False
 
         # ALIGN PROBABILITY OF REQUIRING A CODE TO SUBTYPE
         # self.restroom_requires_code = random.choice([True, False]) if self.has_restroom else False
