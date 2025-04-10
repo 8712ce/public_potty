@@ -3,9 +3,24 @@ from django.http import JsonResponse
 from django.conf import settings
 from .models import Location
 from .models import Character
+from .models import Level
 import random
 from django.utils import timezone
 import time
+
+
+
+def level_select_view(request):
+    if request.method == "POST":
+        level_id = request.POST.get("level_id")
+        if level_id:
+            request.session["selected_level_id"] = level_id
+            return redirect("game") # OR WHEREVER THE GAME STARTS
+        
+    levels = Level.objects.all()
+    return render(request, "gameplay/level_select.html", {"levels": levels})
+
+
 
 
 def generate_random_chunk(num_locations=5):
