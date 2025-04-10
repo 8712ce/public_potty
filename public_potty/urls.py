@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from gameplay.views import game_view, get_chunk, character_select_view
+from gameplay.views import game_view, get_chunk, character_select_view, level_select_view
 from django.shortcuts import redirect
 
 urlpatterns = [
@@ -27,4 +27,5 @@ urlpatterns = [
     # path('select-character/', character_select_view, name='select_character'),
     path('game/', game_view, name='game'),
     path('reset/', lambda request: (request.session.flush(), redirect('select_character'))[1], name='reset'),
+    path('select-level/', level_select_view, name='select_level'),
 ]
