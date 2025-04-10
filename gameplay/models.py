@@ -114,9 +114,21 @@ class Location(models.Model):
         subtype_display = self.get_subtype_display() if self.subtype else ""
         return f"{subtype_display} {self.get_type_display()}".strip() or self.name or "Unnamed Location"
     
-    def randomize_location(self):
+    def randomize_location(self, level=None):
+        if level:
+            type_weights = level.type_weights
+            type_choices = [t for t in self.LOCATION_TYPES if t[0] in type_weights]
+            types, weights = zip(*[(t[0], type_weights[t[0]]) for t in type_choices])
+            self.type = random.choices(types, weights=weights)[0]
+
+            subtype_weights = level.subtype_weights
+            subtypes, sub_weights = zip(*[(int(k), v) for k, v in subtype_weights.items()])
+            self.subtype = random.choices(subtypes, weights=sub_weights)[0]
+        else:
         # EXAMPLE METHOD TO RANDOMLY ASSIGN ATTRIBUTES TO LOCATIONS #
-        self.type = random.choice([t[0] for t in self.LOCATION_TYPES])
+            self.type = random.choice([t[0] for t in self.LOCATION_TYPES])
+            self.subtype = random.randint(1, 5)
+            
         # self.has_restroom = random.choice([True, False])
         self.open_now = random.choice([True, False])
         
@@ -135,8 +147,6 @@ class Location(models.Model):
             self.has_restroom = random.choices([True, False], weights=[6, 4])[0]
         else: # APARTMENTS, HOUSES //
             self.has_restroom = random.choices([True, False], weights=[2, 8])[0]
-
-        self.subtype = random.randint(1, 5)
 
         self.restroom_visible = random.choice([True, False]) if self.has_restroom else False
         self.restroom_requires_permission = random.choice([True, False]) if self.has_restroom else False
