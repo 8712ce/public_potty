@@ -51,6 +51,20 @@ class Pedestrian(models.Model):
 
 
 
+class Level(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+
+    # JSON FIELDS FOR FLEXIBILITY
+    type_weights = models.JSONField(default=dict)
+    subtype_weights = models.JSONField(default=dict)
+
+    def __str__(self):
+        return self.name
+
+
+
+
 
 # LOCATION MODEL #
 class Location(models.Model):
