@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
         levels = [
             {
-                "name": "Main Street North",
+                "name": "Northfront",
                 "description": "A polished, bustling corridor of upscale shops, bars, and restaurants catering to the daytime and evening crowd.",
                 "type_weights": {
                     "restaurant": 5,
@@ -30,7 +30,7 @@ class Command(BaseCommand):
                 },
             },
             {
-                "name": "Main Street South",
+                "name": "Cobbler's End",
                 "description": "A lively commercial strip with late-night spots and a more eclectic, lived-in charm.",
                 "type_weights": {
                     "restaurant": 5,
