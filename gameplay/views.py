@@ -10,6 +10,12 @@ import time
 
 
 
+def reset_session(request):
+    request.session.flush()
+    return redirect('select_character')
+
+
+
 def level_select_view(request):
     if request.method == "POST":
         level_id = request.POST.get("level_id")
@@ -23,14 +29,15 @@ def level_select_view(request):
 
 
 
-def generate_random_chunk(num_locations=5):
+def generate_random_chunk(num_locations=5, level=None):
 
     # RETURNS A LIST OF DICTIONARIES, EACH REPRESENTING A RANDOM LOCATION.  WE'LL STORE THEM IN THE SESSION, SO NO DB WRITES UNLESS WE WANT THEM.
 
     chunk_data = []
     for _ in range(num_locations):
         location = Location()   # CREATE A BLANK LOCATION
-        location.randomize_location()   # FILL WITH RANDOM DATA
+        # location.randomize_location()   # FILL WITH RANDOM DATA
+        location.randomize_location(level=level)   # FILL WITH RANDOM DATA
 
         # CONVERT TO A DICT SO WE CAN STORE IT IN SESSION
         location_dict = {
@@ -56,6 +63,7 @@ def generate_random_chunk(num_locations=5):
 
 
 def get_or_create_chunk(session, chunk_index):
+    from gameplay.models import Level # AVOID CIRCULAR IMPORT
 
     # CHECK IF CHUNK_INDEX IS IN THE SESSION.  IF NOT, GENERATE 5 RANDOM LOCATIONS AND STORE TEHM. RETURNS THE LIST OF LOCATION DICTS FOR THAT CHUNK.
 
@@ -68,8 +76,16 @@ def get_or_create_chunk(session, chunk_index):
     index_str = str(chunk_index)
 
     if index_str not in chunks:
+        level = None
+        level_id = session.get("selected_level_id")
+        if level_id:
+            try:
+                level = Level.objects.get(id=level_id)
+            except Level.DoesNotExist:
+                pass
+
         # CREATE A NEW CHUNK WITH 5 RANDOM LOCATIONS
-        chunk_data = generate_random_chunk(num_locations=5)
+        chunk_data = generate_random_chunk(num_locations=5, level=level)
         # STORE IN SESSION
         chunks[index_str] = chunk_data
         session.modified = True # MARK SESSION AS CHANGED
