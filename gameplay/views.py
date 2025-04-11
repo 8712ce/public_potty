@@ -18,9 +18,9 @@ def reset_session(request):
 
 def level_select_view(request):
     if request.method == "POST":
-        level_id = request.POST.get("level_id")
-        if level_id:
-            request.session["selected_level_id"] = level_id
+        selected_id = request.POST.get("level_id")
+        if selected_id:
+            request.session["selected_level_id"] = selected_id
             return redirect("game") # OR WHEREVER THE GAME STARTS
         
     levels = Level.objects.all()
@@ -143,13 +143,15 @@ def game_view(request):
 def character_select_view(request):
     # IF PLAYER ALREADY SELECTED A CHARACTER, GO STRAIGHT TO THE GAME #
     if request.session.get("selected_character_id"):
-        return redirect("game")
+        # return redirect("game")
+        return redirect("select_level")
     
     if request.method == "POST":
         char_id = request.POST.get("character_id")
         if char_id:
             request.session["selected_character_id"] = char_id
-            return redirect("game") # REDIRECT TO GAME VIEW
+            # return redirect("game") # REDIRECT TO GAME VIEW
+            return redirect("select_level") # REDIRECT TO LEVEL SELECTION
     
     # GET REQUEST - SHOW THE CHARACTERS
     characters = Character.objects.all()

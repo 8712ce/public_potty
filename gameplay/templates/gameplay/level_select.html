@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Select a Neighborhood</title>
+        <style>
+            body {
+                font-family: sans-serif;
+                padding: 40px;
+                background-color: #f5f5f5;
+            }
+            h1 {
+                text-align: center;
+            }
+            .level {
+                background: white;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                padding: 20px;
+                margin: 20px auto;
+                width: 80%;
+                max-width: 600px;
+                cursor: pointer;
+                transition: background 0.3s ease;
+            }
+            .level:hover {
+                background: #eef8ff;
+            }
+            .level form {
+                display: inline;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Select a Neighborhood</h1>
+
+        {% for level in levels %}
+            <div class="level" onclick="this.querySelector('form').submit()">
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="level_id" value="{{ level.id }}">
+                    <h2>{{ level.name }}</h2>
+                    <p>{{ level.description }}</p>
+                    <button type="submit" style="display: none;">Select</button>
+                </form>
+            </div>
+        {% endfor %}
+    </body>
+</html>
